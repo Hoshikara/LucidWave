@@ -6,7 +6,7 @@ https://github.com/Drewol/unnamed-sdvx-clone
 Showcase Video:
 https://youtu.be/iv5D4r0q8is
 
-----------------------------------------
+--------------------------------------------------------------------------------
 
 Created with:
 
@@ -18,7 +18,26 @@ SOUND VOLTEX ViViD WAVE Skin by E1i#4583
 
 Customized by Hoshikara#5973
 
-----------------------------------------
+--------------------------------------------------------------------------------
+
+Notes:
+
+- Check 'Skin Settings' for various options
+
+- Depending on whether you play portrait or landscape, check background shaders, 'bg_p.fs' is for portrait, 'bg_l.fs' is for landscape, rename either one to 'bg.fs'
+    
+- Change Appeal Card by choosing one from /textures/appeal cards and replacing the current one
+inside /textures/, make sure to rename to 'appeal_card.png', .psd template included to create your own
+
+- If you want to use one background for every chart, place all desired background files inside /backgrounds/fallback and make sure 'fallback' is the only folder inside 'backgrounds'
+
+- To apply custom laser colors to the track, swap out the files inside the 'optional' folder for both the track texture and track shaders, and turn on 'Custom Colors' in the Skin Settings
+
+- Recommended Laser Colors (change in Main.cfg)
+Laser0Color = 198.500000
+Laser1Color = 327.000000
+
+--------------------------------------------------------------------------------
 
 Changelog:
 
@@ -120,22 +139,3 @@ November 20, 2019
 - Custom laser colors now apply to laser alerts and track, turn off in Skin Settings and by swapping files inside 'optional' folder, both are off by default
 
 - More accurate banner
-
-----------------------------------------
-
-Notes:
-
-- Check 'Skin Settings' for various options
-
-- Depending on whether you play portrait or landscape, check background shaders, 'bg_p.fs' is for portrait, 'bg_l.fs' is for landscape, rename either one to 'bg.fs'
-    
-- Change Appeal Card by choosing one from /textures/appeal cards and replacing the current one
-inside /textures/, make sure to rename to 'appeal_card.png', .psd template included to create your own
-
-- If you want to use one background for every chart, place all desired background files inside /backgrounds/fallback and make sure 'fallback' is the only folder inside 'backgrounds'
-
-- To apply custom laser colors to the track, swap out the files inside the 'optional' folder for both the track texture and track shaders, and turn on 'Custom Colors' in the Skin Settings
-
-- Recommended Laser Colors (change in Main.cfg)
-Laser0Color = 198.500000
-Laser1Color = 327.000000
