@@ -1,6 +1,12 @@
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
 
-Make sure your game is up-to-date before using by running 'updater.exe' inside your main USC folder or download USC here: https://github.com/Drewol/unnamed-sdvx-clone
+Make sure your game is up-to-date before using by running 'updater.exe' inside your main USC folder or download USC here: 
+https://github.com/Drewol/unnamed-sdvx-clone
+
+Showcase Video:
+https://youtu.be/iv5D4r0q8is
+
+----------------------------------------
 
 Created with:
 
@@ -15,6 +21,13 @@ Customized by Hoshikara#5973
 ----------------------------------------
 
 Changelog:
+
+December 19, 2019
+
+- adjusted various hit animations
+
+- new default bg
+
 
 December 17, 2019
 
