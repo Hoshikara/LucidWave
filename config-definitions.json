@@ -1,0 +1,64 @@
+{
+	"custom_colors":
+	{
+		"type": "selection",
+		"label": "Use Custom Laser Colors",
+		"default": "Off",
+		"values": ["On", "Off"]
+	},
+
+	"earlate_position":
+	{
+		"type": "selection",
+		"label": "Early/Late Position",
+		"default": "Bottom",
+		"values": ["Bottom", "Middle", "Upper", "Upper++", "Off"]
+	},
+
+	"display_name":
+	{
+		"type": "text",
+		"label": "Display Name",
+		"default": "GUEST"
+	},
+
+	"score_diff":
+	{
+		"type": "selection",
+		"label": "Show Score Difference",
+		"default": "On",
+		"values": ["On", "Off"]
+	},
+
+	"user_panel":
+	{
+		"type": "selection",
+		"label": "Show User Panel",
+		"default": "On",
+		"values": ["On", "Off"]
+	},
+
+	"show_chain":
+	{
+		"type": "selection",
+		"label": "Show Chain",
+		"default": "On",
+		"values": ["On", "Off"]
+	},
+
+	"show_volforce":
+	{
+		"type": "selection",
+		"label": "Show Volforce",
+		"default": "On",
+		"values": ["On", "Off"]
+	},
+
+	"skill_level":
+	{
+		"type": "selection",
+		"label": "Skill Level",
+		"default": "none",
+		"values": ["none", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "inf"]
+	}
+}
