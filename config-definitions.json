@@ -1,10 +1,9 @@
 {
-	"custom_colors":
+	"username":
 	{
-		"type": "selection",
-		"label": "Use Custom Laser Colors",
-		"default": "Off",
-		"values": ["On", "Off"]
+		"type": "text",
+		"label": "Username",
+		"default": "GUEST"
 	},
 
 	"earlate_position":
@@ -15,50 +14,51 @@
 		"values": ["Bottom", "Middle", "Upper", "Upper++", "Off"]
 	},
 
-	"display_name":
-	{
-		"type": "text",
-		"label": "Display Name",
-		"default": "GUEST"
-	},
-
-	"score_diff":
-	{
-		"type": "selection",
-		"label": "Show Score Difference",
-		"default": "On",
-		"values": ["On", "Off"]
-	},
-
-	"user_panel":
-	{
-		"type": "selection",
-		"label": "Show User Panel",
-		"default": "On",
-		"values": ["On", "Off"]
-	},
-
-	"show_chain":
-	{
-		"type": "selection",
-		"label": "Show Chain",
-		"default": "On",
-		"values": ["On", "Off"]
-	},
-
-	"show_volforce":
-	{
-		"type": "selection",
-		"label": "Show Volforce",
-		"default": "On",
-		"values": ["On", "Off"]
-	},
-
 	"skill_level":
 	{
 		"type": "selection",
 		"label": "Skill Level",
 		"default": "none",
 		"values": ["none", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "inf"]
+	},
+
+	"Custom Laser Colors" : {"type" : "label"},
+	"custom_colors":
+	{
+		"type": "bool",
+		"label": "On/Off",
+		"default": false
+	},
+
+	"Display Chain" : {"type" : "label"},
+	"display_chain":
+	{
+		"type": "bool",
+		"label": "On/Off",
+		"default": true
+	},
+
+	"Display User Info" : {"type" : "label"},
+	"display_user_info":
+	{
+		"type": "bool",
+		"label": "On/Off",
+		"default": true
+	},
+
+	"Display Score Difference" : {"type" : "label"},
+	"display_score_diff":
+	{
+		"type": "bool",
+		"label": "On/Off",
+		"default": true
+	},
+
+	"Display Volforce" : {"type" : "label"},
+	"display_volforce":
+	{
+		"type": "bool",
+		"label": "On/Off",
+		"default": true
 	}
 }

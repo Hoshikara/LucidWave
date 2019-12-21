@@ -135,7 +135,7 @@ draw_button_color = function(name, x, y, buttonWidth, hoverindex,r,g,b)
     gfx.BeginPath();
     gfx.FillColor(255,255,255);
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE);
-    gfx.FontSize(40);
+    gfx.FontSize(36);
     gfx.Text(name, x, y);
 end;
 
@@ -150,7 +150,7 @@ draw_checkbox = function(text, x, y, hoverindex, current, can_click)
         gfx.FillColor(150,100,100);
     end
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE);
-    gfx.FontSize(35);
+    gfx.FontSize(28);
     gfx.Text(text, x, y)
 
     local xmin,ymin,xmax,ymax = gfx.TextBounds(x, y, text);
@@ -207,7 +207,7 @@ draw_user = function(user, x, y, rank)
     gfx.BeginPath();
     gfx.FillColor(255,255,255);
     gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
-    gfx.FontSize(40);
+    gfx.FontSize(32);
     local name = user.name;
     if user.id == user_id then
         name = name
@@ -290,7 +290,7 @@ function render_loading()
     gfx.Fill()
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("LOADING...", resX - 20, resY - 3)
     gfx.Restore()
 end
@@ -308,10 +308,10 @@ function render_info()
     gfx.Fill()
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_LEFT, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("Multiplayer", 3, resY - 15)
     local xmin,ymin,xmax,ymax = gfx.TextBounds(3, resY - 3, "Multiplayer")
-    gfx.FontSize(20)
+    gfx.FontSize(18)
     gfx.Text(MULTIPLAYER_VERSION, xmax + 13, resY - 15)
     --gfx.Text('Server: '..'', xmax + 13, resY - 15)
     gfx.Restore()
@@ -472,7 +472,7 @@ function render_lobby(deltaTime)
 
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text(selected_room.name, resx/2, 50)
     gfx.Text("Users", resx/4, 100)
 
@@ -492,9 +492,9 @@ function render_lobby(deltaTime)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE);
     gfx.FillColor(255,255,255)
 
-    gfx.FontSize(60)
+    gfx.FontSize(56)
     gfx.Text("Selected Song:", resx*3/4, 100)
-    gfx.FontSize(40)
+    gfx.FontSize(36)
     if selected_song == nil then
         if host == user_id then
             gfx.Text("Select song:", resx*3/4, 175)
@@ -588,7 +588,7 @@ function render_room_list(deltaTime)
 
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("Multiplayer Rooms", resx/2, 100)
 
 
@@ -602,7 +602,7 @@ passwordErrorOffset = 0;
 function render_password_screen(deltaTime)
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("Joining "..selected_room.name.."...", resx/2, resy/4)
 
     gfx.FillColor(50,50,50)
@@ -616,7 +616,7 @@ function render_password_screen(deltaTime)
     if passwordError then
         
         gfx.FillColor(255,50,50)
-        gfx.FontSize(60 + math.floor(passwordErrorOffset*20))
+        gfx.FontSize(56 + math.floor(passwordErrorOffset*20))
         gfx.Text("Invalid password", resx/2, resy/2+80) 
     end
     draw_button("Join", resx/2, resy*3/4, resx/2,  mpScreen.JoinWithPassword);
@@ -625,7 +625,7 @@ end
 function render_new_room_password(delta_time)
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("Create New Room", resx/2, resy/4)
 
     gfx.FillColor(50,50,50)
@@ -642,7 +642,7 @@ end
 function render_new_room_name(deltaTime)
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("Create New Room", resx/2, resy/4)
 
     gfx.FillColor(50,50,50)
@@ -659,7 +659,7 @@ end
 function render_set_username(deltaTime)
     gfx.FillColor(255,255,255)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_BOTTOM)
-    gfx.FontSize(70)
+    gfx.FontSize(60)
     gfx.Text("First things first...", resx/2, resy/4)
 
     gfx.FillColor(50,50,50)

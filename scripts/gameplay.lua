@@ -156,11 +156,11 @@ local gaugePercentBack = gfx.CreateSkinImage("gaugep_back.png", 0)
 
 local customColors = game.GetSkinSetting("custom_colors")
 local earlatePos = game.GetSkinSetting("earlate_position")
-local displayName = game.GetSkinSetting("display_name")
-local scoreDiff = game.GetSkinSetting("score_diff")
-local userPanel = game.GetSkinSetting("user_panel")
-local showChain = game.GetSkinSetting("show_chain")
-local showVolforce = game.GetSkinSetting("show_volforce")
+local userName = game.GetSkinSetting("username")
+local displayScoreDiff = game.GetSkinSetting("display_score_diff")
+local displayUserInfo = game.GetSkinSetting("display_user_info")
+local displayChain = game.GetSkinSetting("display_chain")
+local displayVolforce = game.GetSkinSetting("display_volforce")
 local skillLevel = game.GetSkinSetting("skill_level")
 
 local difficulties = {
@@ -202,7 +202,7 @@ local diffNames = {"NOVICE", "ADVANCED", "EXHAUST", "MAXIMUM"}
 local clearTexts = {"TRACK CRASH", "TRACK COMPLETE", "TRACK COMPLETE", "ULTIMATE CHAIN", "PERFECT"}
 
 function IsUserInputActive(lane)
-    if lane < 7 then
+    if (lane < 7) then
         return game.GetButton(buttonsInOrder[lane])
     end
 
@@ -230,7 +230,9 @@ function render(deltaTime)
     gfx.Scale(scale, scale)
     local yshift = 0
 
-    if portrait then yshift = DrawBanner(deltaTime) end
+    if portrait then 
+		yshift = DrawBanner(deltaTime) 
+	end
 
     gfx.Translate(0, yshift - 150 * math.max(introTimer - 1, 0))
     drawTrackInfo(deltaTime)
@@ -242,7 +244,7 @@ function render(deltaTime)
     drawCombo(deltaTime)
     drawAlerts(deltaTime)
 
-    if introTimer > 0 then
+    if (introTimer > 0) then
         gfx.FillColor(0, 0, 0, math.floor(255 * math.min(introTimer, 1)))
         gfx.FastRect(-1, 0, (resx * 2), (resy * 2))
     end
@@ -270,6 +272,7 @@ function render_crit_base(deltaTime)
     ResetLayoutInformation()
 
     critBarAnimTimer = critBarAnimTimer + deltaTime
+
     SetUpCritTransform()
 
     local xOffset = GetCritLineCenteringOffset()
@@ -305,24 +308,28 @@ function render_crit_base(deltaTime)
 		gfx.Save()
 	    gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 
-        gfx.Scissor(-animWidth / 2, -critBarAnimHeight , animWidth / 2, critBarAnimHeight * 2)
+        gfx.Scissor(-animWidth / 2, -critBarAnimHeight, (animWidth / 2), (critBarAnimHeight * 2))
+
         for i = 1, numPieces do
-            gfx.DrawRect(critBarAnim, -startOffset - critBarAnimWidth * (i - 1), -critBarAnimHeight / 1, critBarAnimWidth, critBarAnimHeight)
+            gfx.DrawRect(critBarAnim, (-startOffset - critBarAnimWidth * (i - 1)), (-critBarAnimHeight / 1), critBarAnimWidth, critBarAnimHeight)
         end
+
         gfx.ResetScissor()
 
-        gfx.Scissor(0, -critBarAnimHeight , animWidth / 2, critBarAnimHeight*2)
+        gfx.Scissor(0, -critBarAnimHeight, (animWidth / 2), (critBarAnimHeight * 2))
+
         for i = 1, numPieces do
-            gfx.DrawRect(critBarAnim, -critBarAnimWidth + startOffset + critBarAnimWidth * (i - 1), -critBarAnimHeight , critBarAnimWidth, critBarAnimHeight )
+            gfx.DrawRect(critBarAnim, (-critBarAnimWidth + startOffset + critBarAnimWidth * (i - 1)), -critBarAnimHeight, critBarAnimWidth, critBarAnimHeight)
         end
+
         gfx.ResetScissor()
 	    gfx.Restore()
     end
 
     -- CRIT BAR
-    gfx.DrawRect(critBar, -critWidth / 2, -critBarHeight / 2 + 6 * scale, critWidth, critBarHeight)
+    gfx.DrawRect(critBar, (-critWidth / 2), (-critBarHeight / 2 + 6 * scale), critWidth, critBarHeight)
 	gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-	gfx.ImageRect(-critWidth / 2, -critBarHeight / 2 + 6 * scale, critWidth, critBarHeight, critBarGlow, 0.7, 0)
+	gfx.ImageRect((-critWidth / 2), (-critBarHeight / 2 + 6 * scale), critWidth, critBarHeight, critBarGlow, 0.7, 0)
 	gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
 
     -- CRIT CONSOLE
@@ -333,7 +340,7 @@ function render_crit_base(deltaTime)
         local critConsoleWidth = critConsoleHeight * (ccw / cch)
 
         local critConsoleY = 110 * scale
-        gfx.DrawRect(critConsole, -critConsoleWidth / 2, -critConsoleHeight / 4 + critConsoleY, critConsoleWidth, critConsoleHeight)
+        gfx.DrawRect(critConsole, (-critConsoleWidth / 2), (-critConsoleHeight / 4 + critConsoleY), critConsoleWidth, critConsoleHeight)
 		gfx.Scale((1 / 0.6), (1 / 0.6))
     end
 
@@ -658,7 +665,7 @@ end
 			gfx.Save()
 
 			gfx.BeginPath()
-			if (customColors == "On") then
+			if (customColors == true) then
 				r,g,b = game.GetLaserColor(i - 1)
 				gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
 			else
@@ -722,41 +729,41 @@ end
 	end
 
 	function button_hit(button, rating, delta)
-		if (button == game.BUTTON_BTA and rating == 2) then
+		if ((button == game.BUTTON_BTA) and (rating == 2)) then
 			buttonCritical(1)
 		end
-		if (button == game.BUTTON_BTB and rating == 2) then
+		if ((button == game.BUTTON_BTB) and (rating == 2)) then
 			buttonCritical(2)
 		end
-		if (button == game.BUTTON_BTC and rating == 2) then
+		if ((button == game.BUTTON_BTC) and (rating == 2)) then
 			buttonCritical(3)
 		end
-		if (button == game.BUTTON_BTD and rating == 2) then
+		if ((button == game.BUTTON_BTD) and (rating == 2)) then
 			buttonCritical(4)
 		end
-		if (button == game.BUTTON_FXL and rating == 2) then
+		if ((button == game.BUTTON_FXL) and (rating == 2)) then
 			buttonCritical(5)
 		end
-		if (button == game.BUTTON_FXR and rating == 2) then
+		if ((button == game.BUTTON_FXR) and (rating == 2)) then
 			buttonCritical(6)
 		end
 
-		if (button == game.BUTTON_BTA and rating == 1) then
+		if ((button == game.BUTTON_BTA) and (rating == 1)) then
 			buttonNear(1)
 		end
-		if (button == game.BUTTON_BTB and rating == 1) then
+		if ((button == game.BUTTON_BTB) and (rating == 1)) then
 			buttonNear(2)
 		end
-		if (button == game.BUTTON_BTC and rating == 1) then
+		if ((button == game.BUTTON_BTC) and (rating == 1)) then
 			buttonNear(3)
 		end
-		if (button == game.BUTTON_BTD and rating == 1) then
+		if ((button == game.BUTTON_BTD) and (rating == 1)) then
 			buttonNear(4)
 		end
-		if (button == game.BUTTON_FXL and rating == 1) then
+		if ((button == game.BUTTON_FXL) and (rating == 1)) then
 			buttonNear(5)
 		end
-		if (button == game.BUTTON_FXR and rating == 1) then
+		if ((button == game.BUTTON_FXR) and (rating == 1)) then
 			buttonNear(6)
 		end
 	end
@@ -855,7 +862,7 @@ function render_crit_overlay(deltaTime)
 
 				-- LASER END ANIMATION
 					for j = 1, 2 do
-						if (i == j and gameplay.laserActive[j] == false) then
+						if ((i == j) and (gameplay.laserActive[j] == false)) then
 							for k = 1, 6 do
 								if (startLaserEndAnim[j][k] == true) then
 									laserEndAnim(deltaTime, laserEndPos[j], j, k)
@@ -869,7 +876,7 @@ function render_crit_overlay(deltaTime)
 					if (i == 1 and gameplay.laserActive[1]) then
 						gfx.Save()
 
-						if (customColors == "On") then
+						if (customColors == true) then
 							r,g,b = game.GetLaserColor(0)
 							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
 						else
@@ -900,7 +907,7 @@ function render_crit_overlay(deltaTime)
 					if (i == 2 and gameplay.laserActive[2]) then
 						gfx.Save()
 
-						if (customColors == "On") then
+						if (customColors == true) then
 							r,g,b = game.GetLaserColor(1)
 							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
 						else
@@ -936,7 +943,7 @@ function render_crit_overlay(deltaTime)
 
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 						gfx.BeginPath()
-						if (customColors == "On") then
+						if (customColors == true) then
 							r,g,b = game.GetLaserColor(0)
 							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
 						else
@@ -952,7 +959,7 @@ function render_crit_overlay(deltaTime)
 
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 						gfx.BeginPath()
-						if (customColors == "On") then
+						if (customColors == true) then
 						r,g,b = game.GetLaserColor(1)
 							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
 						else
@@ -987,7 +994,7 @@ function DrawBanner(deltaTime)
 end
 
 function drawTrackInfo(deltaTime)
-    if (jacket == nil or jacket == jacketFallback) then
+    if ((jacket == nil) or (jacket == jacketFallback)) then
         jacket = gfx.LoadImageJob(gameplay.jacketPath, jacketFallback)
     end
 
@@ -1008,7 +1015,7 @@ function drawTrackInfo(deltaTime)
 	-- TRACK PROGRESS FILL
 	gfx.BeginPath()
 	gfx.FillColor(255, 255, 255)
-	if gameplay.progress < 0.2 then
+	if (gameplay.progress < 0.2) then
 		gfx.ImageRect(95, 42, (146 * (gameplay.progress * 1.2)), 3, progressFill, 0.6, 0)
 	else
 		gfx.ImageRect(95, 42, (146 * gameplay.progress), 3, progressFill, 0.6, 0)
@@ -1017,7 +1024,7 @@ function drawTrackInfo(deltaTime)
 	-- TRACK PROGRESS ARROW
 	gfx.BeginPath()
 	gfx.FillColor(255, 255, 255)
-	if gameplay.progress == 0 then
+	if (gameplay.progress == 0) then
 		gfx.ImageRect(95 + (137 * gameplay.progress), 37.3, 0, (28 * 0.5), progressArrow, 1, 0)
 	else
 		gfx.ImageRect(95 + (137 * gameplay.progress), 37.3, (21 * 0.5), (28 * 0.44), progressArrow, 1, 0)
@@ -1056,37 +1063,33 @@ function drawTrackInfo(deltaTime)
 	if portrait then
 		local trackTitle = gfx.CreateLabel(gameplay.title .. " / " .. gameplay.artist, 16, 0)
 		gfx.FillColor(105, 105, 105)
-		gfx.DrawLabel(trackTitle, (desw / 2) - 19.3 , -122.8, 435)
+		gfx.DrawLabel(trackTitle, ((desw / 2) - 19.3), -122.8, 435)
 		gfx.FillColor(255, 255, 255)
-		gfx.DrawLabel(trackTitle, (desw / 2) - 20 , -123.5, 435)
+		gfx.DrawLabel(trackTitle, ((desw / 2) - 20), -123.5, 435)
 	else
 		gfx.BeginPath()
 		gfx.ImageRect((desw / 5) + 25, -31, tW/4, tH/4, topFillL, 1, 0)
 		local trackTitle = gfx.CreateLabel(gameplay.title .. " / " .. gameplay.artist, 16, 0)
 		gfx.FillColor(105, 105, 105)
-		gfx.DrawLabel(trackTitle, (desw / 2) - 19.3 , -28.3, 415)
+		gfx.DrawLabel(trackTitle, ((desw / 2) - 19.3), -28.3, 415)
 		gfx.FillColor(255, 255, 255)
-		gfx.DrawLabel(trackTitle, (desw / 2) - 20 , -29, 415)
+		gfx.DrawLabel(trackTitle, ((desw / 2) - 20), -29, 415)
 	end
 
     gfx.LoadSkinFont("slant.ttf")
 
 	-- USER INFO
-	if (userPanel == "On") then
-		local appealHeight = 104
-		local appealWidth = 82
-		
-		local userPadding = 110
+	if (displayUserInfo == true) then
 
 		-- USER INFO BACK
 		gfx.BeginPath()
 		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(-20, (userPadding + 146), 225, 131, userBack, 1, 0)
+		gfx.ImageRect(-20, 256, 225, 131, userBack, 1, 0)
 
 		-- APPEAL CARD
         gfx.BeginPath()
 		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(-18, (userPadding + 161), appealWidth, appealHeight, appealCard, 1, 0)
+		gfx.ImageRect(-18, 271, 82, 104, appealCard, 1, 0)
 
 		if (skillLevel == "none") then
 			skillLevel = 1
@@ -1117,31 +1120,31 @@ function drawTrackInfo(deltaTime)
 		end
 
 		-- VOLFORCE AND DAN
-		if (showVolforce == "On") then
+		if (displayVolforce == true) then
 			gfx.BeginPath()
 			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(66, (userPadding + 215), 75, 32, volforce, 1, 0)
+			gfx.ImageRect(66, 325, 75, 32, volforce, 1, 0)
 
 			gfx.BeginPath()
 			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(66, (userPadding + 250), 69, 20, dan[skillLevel], 1, 0)
+			gfx.ImageRect(66, 360, 69, 20, dan[skillLevel], 1, 0)
 		else
 			gfx.BeginPath()
 			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(66, (userPadding + 215), 69, 20, dan[skillLevel], 1, 0)
+			gfx.ImageRect(66, 325, 69, 20, dan[skillLevel], 1, 0)
 		end
 
-		local displayUser = gfx.CreateLabel(displayName, 24, 0)
+		local displayUser = gfx.CreateLabel(userName, 24, 0)
 
 		-- USERNAME
 		gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
 		gfx.FillColor(255, 255, 255)
-		gfx.DrawLabel(displayUser, 75, (userPadding + 156), 126)
+		gfx.DrawLabel(displayUser, 75, 266, 126)
 		gfx.FontSize(24)
 
 		-- SCORE DIFFERENCE
-		if scoreDiff == "On" then
-			drawBestDiff(deltaTime, 253, (userPadding + 173))
+		if (displayScoreDiff == true) then
+			drawBestDiff(deltaTime, 253, 283)
 		end
 	end
 
@@ -1276,8 +1279,8 @@ function drawScore(deltaTime)
 	gfx.BeginPath()
     gfx.FillColor(255, 255, 255)
 
-    drawScoreLarge((desw * 4)  - 700, 172, 1.0, math.ceil(scoreEffective), 4, scoreNumberLarge, false)
-	drawScoreSmall((desw * 4) - 190, 185, 1.0, scoreSmall, 4, scoreNumberSmall, false)
+    drawScoreLarge(((desw * 4) - 700), 172, 1.0, math.ceil(scoreEffective), 4, scoreNumberLarge, false)
+	drawScoreSmall(((desw * 4) - 190), 185, 1.0, scoreSmall, 4, scoreNumberSmall, false)
 
 	-- LOGO ANIMATION
 	local lW, lH = gfx.ImageSize(logoAnim)
@@ -1364,13 +1367,13 @@ function drawGauge(deltaTime)
     
     local gaugeFill = gaugeEffFillNormal
 
-    if gameplay.gaugeType == 0 then
-        if ratePercentage < 70 then
+    if (gameplay.gaugeType == 0) then
+        if (ratePercentage < 70) then
             gaugeFill = gaugeEffFillNormalAnim
         else
             gaugeFill = gaugeEffFillPassAnim
         end
-    elseif gameplay.gaugeType == 1 then
+    elseif (gameplay.gaugeType == 1) then
         posxfill = posxgauge + 19.2
         posyfill = (posygauge + 9)
 		gaugeEffFillW = 29
@@ -1378,8 +1381,8 @@ function drawGauge(deltaTime)
         gaugeFill = gaugeExcFillPass
     end
 
-	if gameplay.gaugeType == 0 then
-		if ratePercentage < 70 then
+	if (gameplay.gaugeType == 0) then
+		if (ratePercentage < 70) then
 			gfx.Scissor(posxfill, math.min(fillyscissor, fillyscissorClear), gaugeEffFillW, math.max(fillhscissor, fillhscissorClear))
 			gfx.ImageRect(posxfill, posyfill, gaugeEffFillW, gaugeEffFillH, gaugeFill, 1, 0)
 			gfx.TickAnimation(gaugeFill, deltaTime)
@@ -1444,7 +1447,7 @@ local comboAlpha = 0
 local comboBurstValue = 100
 
 function drawCombo(deltaTime)
-    if combo == 0 then
+    if (combo == 0) then
         return
     end
 
@@ -1452,7 +1455,7 @@ function drawCombo(deltaTime)
 
 	comboTimer = math.max(comboTimer - deltaTime,0)
 
-    if comboTimer == 0 and game.GetButton(game.BUTTON_STA) == false then 
+    if ((comboTimer == 0) and (game.GetButton(game.BUTTON_STA) == false)) then 
         return
     end
 
@@ -1476,8 +1479,8 @@ function drawCombo(deltaTime)
 
 	local cW, cH = (300 / 8), (488 / 8)
 
-	if showChain == "On" then
-		if gameplay.comboState == 2 or gameplay.comboState == 1 then
+	if (displayChain == true) then
+		if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
 			gfx.BeginPath()
 			gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText_uc, 0.4, 0)
 		else
@@ -1487,7 +1490,7 @@ function drawCombo(deltaTime)
 
 		local posx = (desw - 1) / 2 + randBinary
 
-		if gameplay.comboState == 2 or gameplay.comboState == 1 then
+		if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
 			local digit = combo % 10
 
 			gfx.BeginPath()
@@ -1506,15 +1509,15 @@ function drawCombo(deltaTime)
 
 			digit = math.floor(combo / 1000) % 10
 			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >=1000 and 1 or 0.1, 0)
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >=1000 and alpha or 0.1, 0)
+			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 1000 and 1 or 0.1, 0)
+			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and alpha or 0.1, 0)
 
 			cW, cH = (300 / 8) * comboScale, (488 / 8) * comboScale
 			combox = (300 / 8) * comboScale
 
-			if combo >= comboBurstValue then
+			if (combo >= comboBurstValue) then
 				comboBurstValue = comboBurstValue + 100
-				if comboScaleTrigger == false then
+				if (comboScaleTrigger == false) then
 					comboAlpha = 1
 				end
 				comboScaleTrigger = true
@@ -1524,7 +1527,7 @@ function drawCombo(deltaTime)
 				comboBurstValue = 100
 			end
 	
-			if comboScaleTrigger == true and comboScale < 3 then
+			if ((comboScaleTrigger == true) and (comboScale < 3)) then
 				comboScale = comboScale + deltaTime * 6
 				comboAlpha = math.max(comboAlpha - deltaTime * 5, 0)
 			else
@@ -1564,7 +1567,7 @@ function drawCombo(deltaTime)
 
 			digit = math.floor(combo / 1000) % 10
 			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >=1000 and 1 or 0.1, 0)
+			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and 1 or 0.1, 0)
 		end
 	end
 
@@ -1576,7 +1579,7 @@ function drawEarlate(deltaTime)
 
     earlateTimer = math.max(earlateTimer - deltaTime, 0)
 
-    if earlateTimer == 0 and game.GetButton(game.BUTTON_STA) == false then 
+    if ((earlateTimer == 0) and (game.GetButton(game.BUTTON_STA) == false)) then 
 		return nil 
 	end
 
@@ -1595,35 +1598,37 @@ function drawEarlate(deltaTime)
 
 	local earlateHeight = 0
 
-	if earlatePos == "Bottom" then
+	if (earlatePos == "Bottom") then
 		if portrait then
 			earlateHeight = 30
 		else
 			earlateHeight = 60
 		end
-	elseif earlatePos == "Middle" then
+	elseif (earlatePos == "Middle") then
 		if portrait then
 			earlateHeight = 170
 		else
 			earlateHeight = 220
 		end
-	elseif earlatePos == "Upper" then
+	elseif (earlatePos == "Upper") then
 		if portrait then
 			earlateHeight = 310
 		else
 			earlateHeight = 360
 		end
-	elseif earlatePos == "Upper++" then
+	elseif (earlatePos == "Upper++") then
 		if portrait then
 			earlateHeight = 420
 		else
 			earlateHeight = 470
 		end
-	elseif earlatePos == "Off" then
+	elseif (earlatePos == "Off") then
 		earlateHeight = 3000
 	end
 
-	if portrait then ypos = desh * critLinePos[2] - 200 end
+	if portrait then 
+		ypos = desh * critLinePos[2] - 200
+	end
 
     if late then
 		gfx.FillColor(255, 255, 255, alpha)
@@ -1661,7 +1666,7 @@ function drawAlerts(deltaTime)
         alertScale = math.min(alertScale, 1)
         gfx.BeginPath()
 
-		if customColors == "On" then
+		if (customColors == true) then
 			gfx.Scale((alertScale ^ 4.0), 1)
 			gfx.FillColor(255, 255, 255)
 			gfx.ImageRect(-50, -50, 100, 100, alertFill, 1, 0)
@@ -1676,7 +1681,7 @@ function drawAlerts(deltaTime)
 		gfx.Scale((1 / alertScale ^ 4.0), 1)
         gfx.BeginPath()
 
-		if customColors == "On" then
+		if (customColors == true) then
 			gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 255)
 			gfx.ImageRect(-50, -50, 100, 100, alertLs, ((fadeTimer + 0.05) * alertScale), 0)
 			gfx.FillColor(255, 255, 255)
@@ -1706,7 +1711,7 @@ function drawAlerts(deltaTime)
         alertScale = math.min(alertScale, 1)
         gfx.BeginPath()
 
-		if customColors == "On" then
+		if (customColors == true) then
 			gfx.Scale((alertScale ^ 4.0), 1)
 			gfx.FillColor(255, 255, 255)
 			gfx.ImageRect(-50, -50, 100, 100, alertFill, 1, 0)
@@ -1721,7 +1726,7 @@ function drawAlerts(deltaTime)
 		gfx.Scale((1 / alertScale ^ 4.0), 1)
         gfx.BeginPath()
 
-		if customColors == "On" then
+		if (customColors == true) then
 			gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 255)
 			gfx.ImageRect(-50, -50, 100, 100, alertRs, ((fadeTimer + 0.05) * alertScale), 0)
 			gfx.FillColor(255, 255, 255)
@@ -1876,22 +1881,22 @@ function draw_users(detaTime)
     local rank = 0
     for i, u in ipairs(users) do
         gfx.FillColor(255, 255, 255)
-        local score_big = string.format("%04d",math.floor(u.score/1000))
-        local score_small = string.format("%03d",u.score%1000)
+        local score_big = string.format("%04d",math.floor(u.score/10000))
+        local score_small = string.format("%04d",u.score%10000)
         local user_text = '('..u.name..')'
 
-        local size_big = 40
-        local size_small = 28
-        local size_name = 30
+        local size_big = 36
+        local size_small = 26
+        local size_name = 26
 
         if u.id == gameplay.user_id then
-            size_big = 48
-            size_small = 32
-            size_name = 40
+            size_big = 44
+            size_small = 30
+            size_name = 36
             rank = i
         end
 
-        gfx.LoadSkinFont(mono_font)
+        gfx.LoadSkinFont(normal_font)
         gfx.FontSize(size_big)
         gfx.Text(score_big, 0, yoff)
         local xmin,ymin,xmax,ymax_big = gfx.TextBounds(0, yoff, score_big)

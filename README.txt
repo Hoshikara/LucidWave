@@ -41,6 +41,14 @@ Laser1Color = 327.000000
 
 Changelog:
 
+December 20, 2019
+
+- Modified 'Skin Settings' options
+
+- Adjusted multiplayer lobby/gameplay font sizes
+
+- Removed various unneccessary files/lines
+
 December 19, 2019
 
 - adjusted various hit animations
