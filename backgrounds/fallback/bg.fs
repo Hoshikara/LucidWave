@@ -115,7 +115,7 @@ vec2 rotate2d(vec2 uv,float _angle, vec2 pivot){
   float BaseTexRotation = 0.0;
 
   // Scale
-  vec2 Scale = vec2(portrait(0.8,1.1), 1.0);
+  vec2 Scale = vec2(portrait(0.8, 1.2), 0.8);
 
 void main()
 {
@@ -189,11 +189,12 @@ void main()
 	//END PARTICLES
 
     float rot = (atan(point_diff.x,point_diff.y) + BaseTexRotation) / TWO_PI;
+	float clear_bright = 0.8 + timing.y * 0.2;
 
-    vec4 col = texture(mainTex, vec2(rot/4.0,mod(texY/4.0,0.25)));
+    vec4 col = texture(mainTex, vec2(rot/4.0,mod(texY/4.0,0.25) + floor(clearTransition) * 0.2578125));
     vec4 clear_col = texture(mainTex, vec2(rot/4.0,mod(texY/4.0,0.25) + 0.2578125));
 
-    col.rgb = mix(col,clear_col,clearTransition).rgb;
+    col.rgb = mix(col,clear_col * clear_bright,clearTransition).rgb;
     target.xyz = col.xyz * 2.0;
     target.a = col.a * fog;
 	
