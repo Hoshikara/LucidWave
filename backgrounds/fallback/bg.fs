@@ -103,10 +103,10 @@ vec2 rotate2d(vec2 uv,float _angle, vec2 pivot){
   int N = 4;
 
   // "Stretch" | lower = "Stretchier"
-  float Stretch = .3;
+  float Stretch = 0.3;
 
   // Speed
-  float speed = 1;
+  float speed = 1.0;
 
   // Default rotation in radians
   float BaseRotation = 0.0;
@@ -115,7 +115,7 @@ vec2 rotate2d(vec2 uv,float _angle, vec2 pivot){
   float BaseTexRotation = 0.0;
 
   // Scale
-  vec2 Scale = vec2(portrait(0.8, 1.2), 0.8);
+  vec2 Scale = vec2(portrait(0.8, 0.8), 0.8);
 
 void main()
 {
@@ -161,7 +161,7 @@ void main()
 	//PARTICLES
 	vec2 particleOffset = vec2(0.5,0.375);
 	vec4 particles = vec4(0.0,0.0,1.0,0.0);
-    float particlesTime = timing.z * 1.0;
+    float particlesTime = timing.z * 1.6;
 
 	for(int i=0;i<2;++i){
         float timeOffset = 0.5*float(i);
@@ -216,5 +216,3 @@ void main()
 	target.rgb = mix(target.rgb,particles.rgb,particles.a);
 	target.a = 1.0;
 }
-
-//Edited by Halo ID
