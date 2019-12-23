@@ -70,7 +70,7 @@ render = function(deltaTime)
 	gfx.Save()
 
 	gfx.BeginPath()
-	gfx.FillColor(255, 255, 255)
+	gfx.FillColor(0, 0, 0)
 	gfx.Rect(0, 0, resx, resy)
 	gfx.Fill()
 
