@@ -10,7 +10,7 @@ https://youtu.be/iv5D4r0q8is
 
 Created with:
 
-Lasergame Test Release 1 Build 2 by fdigl#5990
+Lasergame Test Release 1 Build 2 by fdigl#5990, https://github.com/fdigl
 
 SDVX IV Skin for USC by Halo ID#9588
 
