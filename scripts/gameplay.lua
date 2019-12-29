@@ -523,7 +523,7 @@ end
 
 			critAnimTimer[i][j] = critAnimTimer[i][j] + deltaTime
 
-			if (critAnimTimer[i][j] > (1.0 / 54.0)) then
+			if (critAnimTimer[i][j] > (1.0 / 56.0)) then
 				critAnimTimer[i][j] = 0
 				critAnimIndex[i][j] = critAnimIndex[i][j] + 1
 			end
