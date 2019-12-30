@@ -1885,14 +1885,14 @@ function draw_users(detaTime)
         local score_small = string.format("%04d",u.score%10000)
         local user_text = '('..u.name..')'
 
-        local size_big = 36
+        local size_big = 34
         local size_small = 26
         local size_name = 26
 
         if u.id == gameplay.user_id then
-            size_big = 44
+            size_big = 42
             size_small = 30
-            size_name = 36
+            size_name = 34
             rank = i
         end
 
