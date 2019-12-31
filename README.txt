@@ -43,7 +43,7 @@ inside /textures/, make sure to rename to 'appeal_card.png', .psd template inclu
 
 Changelog:
 
-December 30, 2019
+December 31, 2019
 
 - Added effect for passing during gameplay
 
