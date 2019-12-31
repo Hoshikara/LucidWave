@@ -21,6 +21,30 @@ local levelOffset = 0;
 local folderOffset = 0;
 
 render = function(deltaTime, shown)
+	gfx.Save()
+
+    for i,f in ipairs(filters.folder) do
+        if not folderLabels[i] then
+            folderLabels[i] = gfx.CreateLabel(f, 40, 0)
+        end
+    end
+
+	for i,l in ipairs(filters.level) do
+        if not levelLabels[i] then
+            levelLabels[i] = gfx.CreateLabel(l, 40, 0)
+        end
+    end
+	gfx.Translate(135, 307)
+	gfx.Scale(0.45, 0.45)
+	gfx.LoadSkinFont("arial.ttf")
+	gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
+	gfx.BeginPath()
+	gfx.FillColor(255, 255, 255)
+	gfx.DrawLabel(folderLabels[selectedFolder], 0, 0, 1000)
+	gfx.DrawLabel(levelLabels[selectedLevel], 0, 79, 400)
+
+	gfx.Restore()
+
     if not shown then
         return
     end

@@ -97,6 +97,7 @@ local progressArrow = gfx.CreateSkinImage("progress_arrow.png", 0)
 local scoreBack = gfx.CreateSkinImage("score_back.png", 0)
 local userBack = gfx.CreateSkinImage("userpanel_back.png", 0)
 local volforce = gfx.CreateSkinImage("volforce.png", 0)
+local passEffect = gfx.CreateSkinImage("pass_effect.png", 0)
 
 local dan = {
 	gfx.CreateSkinImage("dan/none.png", 0),
@@ -243,6 +244,7 @@ function render(deltaTime)
     drawEarlate(deltaTime)
     drawCombo(deltaTime)
     drawAlerts(deltaTime)
+	drawPassEffect(deltaTime)
 
     if (introTimer > 0) then
         gfx.FillColor(0, 0, 0, math.floor(255 * math.min(introTimer, 1)))
@@ -1738,6 +1740,37 @@ function drawAlerts(deltaTime)
 
         gfx.Restore()
     end
+end
+
+local effectScale = 1
+local effectAlpha = 1
+local playEffect = true
+
+function drawPassEffect(deltaTime)
+	if (gameplay.gauge > 0.7) then
+		if playEffect == true then
+
+			effectScale = effectScale + (deltaTime / 1.35) * 30
+			effectAlpha = math.max(effectAlpha - (deltaTime * 4), 0)
+			local eXY = -101 * effectScale
+			local eWH = 202 * effectScale
+
+			gfx.Save()
+			gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
+			if portrait then
+				gfx.Translate((desw / 2), (desh / 2) - 110)
+			else
+				gfx.Translate((desw / 2), (desh / 2) - 35)
+			end
+			gfx.BeginPath()
+			gfx.FillColor(255, 255, 255)
+			gfx.ImageRect(eXY, eXY, eWH, eWH, passEffect, effectAlpha, 0)
+			gfx.Restore()
+			if (effectAlpha == 0) then
+				playEffect = false
+			end
+		end
+	end
 end
 
 render_intro = function(deltaTime)

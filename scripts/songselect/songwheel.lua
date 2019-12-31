@@ -530,31 +530,25 @@ draw_search = function(x,y,w,h)
   
   local xpos = x + (searchIndex + soffset)*w
   gfx.LoadSkinFont("arial.ttf");
-  gfx.UpdateLabel(searchText, string.format("SEARCH: %s",songwheel.searchText), 16, 0)
+  gfx.UpdateLabel(searchText, string.format("SEARCH: %s",songwheel.searchText), 14, 0)
   
   gfx.BeginPath()
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE)
-  gfx.FillColor(255, 255, 255)
+  gfx.FillColor(0, 0, 0, 0)
 
   if searchIndex ~= (songwheel.searchInputActive and 0 or 1) then
       gfx.BeginPath()
-	  gfx.FillColor(0, 0, 0, 200)
-
-	  if portrait then
-		gfx.FastRect(0, 0, resx, resy)
-	  elseif landscape then
-		gfx.FastRect(-resx, 0, resx*2, resy*2)
-	  end
-
+	  gfx.FillColor(0, 0, 0, 255)
+	  gfx.RoundedRect(225, 198.3, 382.2, 20, 10)
 	  gfx.Fill()
-	  gfx.FillColor(245, 65, 125)
+	  gfx.FillColor(255, 255, 255)
   end
   
   if searchSound ~= (songwheel.searchInputActive and 0 or 1) then
       game.PlaySample("woosh")
   end
   searchSound = songwheel.searchInputActive and 0 or 1
-  gfx.DrawLabel(searchText, 137, 317, w-20)
+  gfx.DrawLabel(searchText, 270, 207, w-20)
 end
 
 -- CALLBACK

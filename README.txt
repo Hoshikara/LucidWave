@@ -1,10 +1,12 @@
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
 
+No official SOUND VOLTEX VIVID WAVE assets were used in the creation of this skin.
+
 Make sure your game is up-to-date before using by running 'updater.exe' inside your main USC folder or download USC here: 
 https://github.com/Drewol/unnamed-sdvx-clone
 
 Showcase Video:
-https://youtu.be/iv5D4r0q8is
+https://www.youtube.com/watch?v=HBf6RmCfH3o
 
 --------------------------------------------------------------------------------
 
@@ -15,6 +17,8 @@ Lasergame Test Release 1 Build 2 by fdigl#5990, https://github.com/fdigl
 SDVX IV Skin for USC by Halo ID#9588
 
 SOUND VOLTEX ViViD WAVE Skin by E1i#4583
+
+USC Vivid Wave Skin by Some One
 
 Customized by Hoshikara#5973
 
@@ -33,13 +37,30 @@ inside /textures/, make sure to rename to 'appeal_card.png', .psd template inclu
 
 - To apply custom laser colors to the track, swap out the files inside the 'optional' folder for both the track texture and track shaders, and turn on 'Custom Colors' in the Skin Settings
 
-- Recommended Laser Colors (change in Main.cfg)
-Laser0Color = 198.500000
-Laser1Color = 327.000000
+- Custom laser colors not supported
 
 --------------------------------------------------------------------------------
 
 Changelog:
+
+December 30, 2019
+
+- Added effect for passing during gameplay
+
+- New lasers textures, removed support for custom (laser only) colors for the sake of accuracy; red, blue, green, and yellow laser colors included in the 'optional' folder,
+custom colors can still be applied to track, laser alerts, and laser animations
+
+- New button textures
+
+- Added display for current folder and level to song select, moved search bar
+
+- Fixed critical hit flickering
+
+- Updated multiplayer screen from default skin
+
+- Adjusted scorehit texture and colors
+
+- Changed landscape fill from white to black
 
 December 20, 2019
 
