@@ -45,12 +45,12 @@ Changelog:
 
 December 31, 2019
 
-- Added effect for passing during gameplay
+- Added effect to indicate passing 70% during gameplay
 
-- New lasers textures, removed support for custom (laser only) colors for the sake of accuracy; red, blue, green, and yellow laser colors included in the 'optional' folder,
+- New laser textures/shaders, removed support for custom colors (applying to lasers only) for the sake of accuracy; red, blue, green, and yellow laser colors included in the 'optional' folder,
 custom colors can still be applied to track, laser alerts, and laser animations
 
-- New button textures
+- New button textures/shaders for bt/fx and bt/fx holds
 
 - Added display for current folder and level to song select, moved search bar
 
