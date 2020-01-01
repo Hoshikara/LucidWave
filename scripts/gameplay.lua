@@ -444,13 +444,13 @@ end
 
 			if (holdAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-				gfx.ImageRect(-213, -213, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
-				gfx.ImageRect(-213, -213, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
+				gfx.ImageRect(-213, -221, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
+				gfx.ImageRect(-213, -221, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
 			end
 
 			if (holdCriticalAnimTimer[i] < (1.0 / 59.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
-				gfx.ImageRect(-213, -213, 426, 426, holdCriticalAnimFrames[holdCriticalAnimIndex[i]], 1.5, 0)
+				gfx.ImageRect(-213, -221, 426, 426, holdCriticalAnimFrames[holdCriticalAnimIndex[i]], 1.5, 0)
 			end
 
 			if (holdAnimIndex[i] == 80) then
