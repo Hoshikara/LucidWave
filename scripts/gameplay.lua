@@ -119,13 +119,13 @@ local scoreBackAnim = gfx.LoadSkinAnimation("anim_frames/score_arrows", (1.0 / 4
 local logoAnim = gfx.LoadSkinAnimation("anim_frames/logo", (1.0 / 60.0))
 
 local laserAnimDome = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 42.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 42.0))
+	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 30.0)),
+	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 30.0))
 }
 
 local laserAnimCritical = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 42.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 42.0))
+	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 59.0)),
+	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 59.0))
 }
 
 local laserCursorTail = {
@@ -365,6 +365,16 @@ end
 			return frames
 		end
 
+		function loadHoldCriticalAnimFrames(path)
+			local frames = {}
+
+			for i = 0, 153 do
+				frames[i]  = gfx.CreateSkinImage(string.format("%s/%04d.png", path, i), 0)
+			end
+
+			return frames
+		end
+
 		function loadHoldEndAnimFrames(path)
 			local frames = {}
 
@@ -379,21 +389,25 @@ end
 
 		local holdDomeAnimFrames = loadHoldAnimFrames("hitanim_frames/hold_dome")
 
-		local holdCriticalAnimFrames = loadHoldAnimFrames("hitanim_frames/hold_critical")
+		local holdCriticalAnimFrames = loadHoldCriticalAnimFrames("hitanim_frames/hold_critical")
 
 		local holdEndAnimFrames = loadHoldEndAnimFrames("hitanim_frames/hold_end")
 
 		local holdAnimTimer = {0, 0, 0, 0, 0, 0}
 
+		local holdCriticalAnimTimer = {0, 0, 0, 0, 0, 0}
+
 		local holdAnimIndex = {1, 1, 1, 1, 1, 1}
+
+		local holdCriticalAnimIndex = {1, 1, 1, 1, 1, 1}
 
 		local holdEndAnimTimer = {0, 0, 0, 0, 0, 0}
 
 		local holdEndAnimIndex = {1, 1, 1, 1, 1, 1}
 
-		local startEndAnim = {false, false, false, false, false, false}
+		local delayCriticalStart = {0, 0, 0, 0, 0, 0}
 
-		local holdTPF = 0
+		local startEndAnim = {false, false, false, false, false, false}
 
 		-- HOLD
 		function holdAnim(deltaTime, i)
@@ -411,27 +425,40 @@ end
 
 			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
 
-			if (holdAnimIndex[i] < 10) then
-				holdTPF = 30.0
-			else
-				holdTPF = 42.0
+			delayCriticalStart[i] = delayCriticalStart[i] + deltaTime
+
+			if (delayCriticalStart[i] > (1.0 / 7.0)) then
+				holdCriticalAnimTimer[i] = holdCriticalAnimTimer[i] + deltaTime
 			end
 
-			if (holdAnimTimer[i] > (1.0 / holdTPF)) then
+
+			if (holdAnimTimer[i] > (1.0 / 30.0)) then
 				holdAnimTimer[i] = 0
 				holdAnimIndex[i] = holdAnimIndex[i] + 1
 			end
 
-			if (holdAnimTimer[i] < (1.0 / holdTPF)) then
+			if (holdCriticalAnimTimer[i] > (1.0 / 59.0)) then
+				holdCriticalAnimTimer[i] = 0
+				holdCriticalAnimIndex[i] = holdCriticalAnimIndex[i] + 1
+			end
+
+			if (holdAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-				gfx.ImageRect(-213, -221, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
-				gfx.ImageRect(-213, -221, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
+				gfx.ImageRect(-213, -213, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
+				gfx.ImageRect(-213, -213, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
+			end
+
+			if (holdCriticalAnimTimer[i] < (1.0 / 59.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
-				gfx.ImageRect(-213, -221, 426, 426, holdCriticalAnimFrames[holdAnimIndex[i]], 1, 0)
+				gfx.ImageRect(-213, -213, 426, 426, holdCriticalAnimFrames[holdCriticalAnimIndex[i]], 1.5, 0)
 			end
 
 			if (holdAnimIndex[i] == 80) then
 				holdAnimIndex[i] = 10
+			end
+
+			if (holdCriticalAnimIndex[i] == 153) then
+				holdCriticalAnimIndex[i] = 10
 			end
 
 			gfx.Restore()
@@ -451,14 +478,14 @@ end
 			gfx.BeginPath()
 			gfx.FillColor(255, 255, 255)
 
-			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
+			holdEndAnimTimer[i] = holdEndAnimTimer[i] + deltaTime
 
-			if (holdAnimTimer[i] > (1.0 / 30.0)) then
-				holdAnimTimer[i] = 0
+			if (holdEndAnimTimer[i] > (1.0 / 30.0)) then
+				holdEndAnimTimer[i] = 0
 				holdEndAnimIndex[i] = holdEndAnimIndex[i] + 1
 			end
 
-			if (holdAnimTimer[i] < (1.0 / 30.0)) then
+			if (holdEndAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 				gfx.ImageRect(-213, -221, 426, 426, holdEndAnimFrames[holdEndAnimIndex[i]], 1.5, 0)
 			end
@@ -532,9 +559,9 @@ end
 
 			if (critAnimTimer[i][j] < (1.0 / 56.0)) then
 				if (critBT == true) then
-					gfx.ImageRect(-200, -206, 400, 400, critAnimFramesBT[critAnimIndex[i][j]], 1, 0)
+					gfx.ImageRect(-200, -206, 400, 400, critAnimFramesBT[critAnimIndex[i][j]], 1.2, 0)
 				elseif (critFX == true) then
-					gfx.ImageRect(-200, -206, 400, 400, critAnimFramesFX[critAnimIndex[i][j]], 1, 0)
+					gfx.ImageRect(-200, -206, 400, 400, critAnimFramesFX[critAnimIndex[i][j]], 1.2, 0)
 				end
 			end
 
@@ -608,9 +635,9 @@ end
 
 			if (nearAnimTimer[i][j] < (1.0 / 58.0)) then
 				if (nearBT == true) then
-					gfx.ImageRect(-200, -206, 400, 400, nearAnimFramesBT[nearAnimIndex[i][j]], 1, 0)
+					gfx.ImageRect(-200, -206, 400, 400, nearAnimFramesBT[nearAnimIndex[i][j]], 1.2, 0)
 				elseif (nearFX == true) then
-					gfx.ImageRect(-200, -206, 400, 400, nearAnimFramesFX[nearAnimIndex[i][j]], 1, 0)
+					gfx.ImageRect(-200, -206, 400, 400, nearAnimFramesFX[nearAnimIndex[i][j]], 1.2, 0)
 				end
 			end
 
@@ -795,6 +822,8 @@ function render_crit_overlay(deltaTime)
 					startEndAnim[i] = true
 				else
 					holdAnimIndex[i] = 1
+					holdCriticalAnimIndex[i] = 1
+					delayCriticalStart[i] = 0
 				end
 			end
 
@@ -882,7 +911,7 @@ function render_crit_overlay(deltaTime)
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
 						gfx.BeginPath()
 						gfx.FillColor(255, 255, 255)
-						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserAnimCritical[1], 1, 0)
+						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserAnimCritical[1], 1.5, 0)
 						gfx.TickAnimation(laserAnimCritical[1], deltaTime)
 
 						gfx.Restore()
@@ -907,7 +936,7 @@ function render_crit_overlay(deltaTime)
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
 						gfx.BeginPath()
 						gfx.FillColor(255, 255, 255)
-						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserAnimCritical[2], 1, 0)
+						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserAnimCritical[2], 1.5, 0)
 						gfx.TickAnimation(laserAnimCritical[2], deltaTime)
 
 						gfx.Restore()
