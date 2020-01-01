@@ -35,9 +35,7 @@ inside /textures/, make sure to rename to 'appeal_card.png', .psd template inclu
 
 - If you want to use one background for every chart, place all desired background files inside /backgrounds/fallback and make sure 'fallback' is the only folder inside 'backgrounds'
 
-- To apply custom laser colors to the track, swap out the files inside the 'optional' folder for both the track texture and track shaders, and turn on 'Custom Colors' in the Skin Settings
-
-- Custom laser colors not supported
+- Custom laser colors not supported, check 'optional' folder for available colors
 
 --------------------------------------------------------------------------------
 
@@ -47,8 +45,9 @@ December 31, 2019
 
 - Added effect to indicate passing 70% during gameplay
 
-- New laser textures/shaders, removed support for custom colors (applying to lasers only) for the sake of accuracy; red, blue, green, and yellow laser colors included in the 'optional' folder,
-custom colors can still be applied to track, laser alerts, and laser animations
+- New laser textures/shaders
+
+- Removed support for custom colors for the sake of accuracy; red, blue, green, and yellow available for track, lasers, laser alerts, and laser animations included in the 'optional' folder
 
 - New button textures/shaders for bt/fx and bt/fx holds
 

@@ -119,13 +119,13 @@ local scoreBackAnim = gfx.LoadSkinAnimation("anim_frames/score_arrows", (1.0 / 4
 local logoAnim = gfx.LoadSkinAnimation("anim_frames/logo", (1.0 / 60.0))
 
 local laserAnimDome = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 40.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 40.0))
+	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 38.0)),
+	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 38.0))
 }
 
 local laserAnimCritical = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 40.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 40.0))
+	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 38.0)),
+	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 38.0))
 }
 
 local laserCursorTail = {
@@ -138,13 +138,6 @@ local alertRBack = gfx.CreateSkinImage("alert_r_back.png", 0)
 local alertL = gfx.CreateSkinImage("alert_l.png", 0)
 local alertR = gfx.CreateSkinImage("alert_r.png", 0)
 
-local alertFill = gfx.CreateSkinImage("laser_alerts/alert_fill.png", 0)
-local alertBack = gfx.CreateSkinImage("laser_alerts/alert_back.png", 0)
-local alertLt = gfx.CreateSkinImage("laser_alerts/alert_l_white.png", 0)
-local alertRt = gfx.CreateSkinImage("laser_alerts/alert_r_white.png", 0)
-local alertLs = gfx.CreateSkinImage("laser_alerts/alert_l_shadow.png", 0)
-local alertRs = gfx.CreateSkinImage("laser_alerts/alert_r_shadow.png", 0)
-
 local gaugeEffBack = gfx.CreateSkinImage("gauges/effective/gauge-back.png", 0)
 local gaugeEffFillNormalAnim = gfx.LoadSkinAnimation("gauges/effective/fill_normal_frames", (1.0 / 48.0))
 local gaugeEffFillPassAnim = gfx.LoadSkinAnimation("gauges/effective/fill_pass_frames", (1.0 / 48.0))
@@ -155,7 +148,6 @@ local gaugeExcFillPass = gfx.CreateSkinImage("gauges/excessive/gauge-fill.png", 
 
 local gaugePercentBack = gfx.CreateSkinImage("gaugep_back.png", 0)
 
-local customColors = game.GetSkinSetting("custom_colors")
 local earlatePos = game.GetSkinSetting("earlate_position")
 local userName = game.GetSkinSetting("username")
 local displayScoreDiff = game.GetSkinSetting("display_score_diff")
@@ -417,12 +409,12 @@ end
 
 			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
 
-			if (holdAnimTimer[i] > (1.0 / 36.0)) then
+			if (holdAnimTimer[i] > (1.0 / 38.0)) then
 				holdAnimTimer[i] = 0
 				holdAnimIndex[i] = holdAnimIndex[i] + 1
 			end
 
-			if (holdAnimTimer[i] < (1.0 / 36.0)) then
+			if (holdAnimTimer[i] < (1.0 / 38.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 				gfx.ImageRect(-213, -221, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
 				gfx.ImageRect(-213, -221, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
@@ -453,12 +445,12 @@ end
 
 			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
 
-			if (holdAnimTimer[i] > (1.0 / 36.0)) then
+			if (holdAnimTimer[i] > (1.0 / 38.0)) then
 				holdAnimTimer[i] = 0
 				holdEndAnimIndex[i] = holdEndAnimIndex[i] + 1
 			end
 
-			if (holdAnimTimer[i] < (1.0 / 36.0)) then
+			if (holdAnimTimer[i] < (1.0 / 38.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 				gfx.ImageRect(-213, -221, 426, 426, holdEndAnimFrames[holdEndAnimIndex[i]], 1.5, 0)
 			end
@@ -667,12 +659,7 @@ end
 			gfx.Save()
 
 			gfx.BeginPath()
-			if (customColors == true) then
-				r,g,b = game.GetLaserColor(i - 1)
-				gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
-			else
-				gfx.FillColor(255, 255, 255)
-			end
+			gfx.FillColor(255, 255, 255)
 
 			local lEXY = 200 * (scale * 0.875)
 			local lEWH = 400 * (scale * 0.875)
@@ -878,13 +865,7 @@ function render_crit_overlay(deltaTime)
 					if (i == 1 and gameplay.laserActive[1]) then
 						gfx.Save()
 
-						if (customColors == true) then
-							r,g,b = game.GetLaserColor(0)
-							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
-						else
-							gfx.FillColor(255, 255, 255)
-						end
-
+						gfx.FillColor(255, 255, 255)
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 						gfx.BeginPath()
 						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserAnimDome[1], 1.5, 0)
@@ -909,13 +890,7 @@ function render_crit_overlay(deltaTime)
 					if (i == 2 and gameplay.laserActive[2]) then
 						gfx.Save()
 
-						if (customColors == true) then
-							r,g,b = game.GetLaserColor(1)
-							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
-						else
-							gfx.FillColor(255, 255, 255)
-						end
-
+						gfx.FillColor(255, 255, 255)
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 						gfx.BeginPath()
 						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserAnimDome[2], 1.5, 0)
@@ -945,12 +920,7 @@ function render_crit_overlay(deltaTime)
 
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 						gfx.BeginPath()
-						if (customColors == true) then
-							r,g,b = game.GetLaserColor(0)
-							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
-						else
-							gfx.FillColor(255, 255, 255)
-						end
+						gfx.FillColor(255, 255, 255)
 						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserCursorTail[1], 1, 0)
 						
 						gfx.Restore()
@@ -961,12 +931,7 @@ function render_crit_overlay(deltaTime)
 
 						gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 						gfx.BeginPath()
-						if (customColors == true) then
-						r,g,b = game.GetLaserColor(1)
-							gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 55)
-						else
-							gfx.FillColor(255, 255, 255)
-						end
+						gfx.FillColor(255, 255, 255)
 						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserCursorTail[2], 1, 0)
 
 						gfx.Restore()
@@ -1667,31 +1632,13 @@ function drawAlerts(deltaTime)
         local alertScale = (-(alertTimers[1] ^ 2.0) + (1.5 * alertTimers[1])) * 5.0
         alertScale = math.min(alertScale, 1)
         gfx.BeginPath()
-
-		if (customColors == true) then
-			gfx.Scale((alertScale ^ 4.0), 1)
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertFill, 1, 0)
-			gfx.FillColor(math.min(r + 85, 255), math.min(g + 85, 255), math.min(b + 85, 255), 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertBack, 1, 0)
-		else
-			gfx.FillColor(255, 255, 255)
-			gfx.Scale((alertScale ^ 4.0), 1)
-			gfx.ImageRect(-50, -50, 100, 100, alertLBack, 1, 0)
-		end
-
+		gfx.FillColor(255, 255, 255)
+		gfx.Scale((alertScale ^ 4.0), 1)
+		gfx.ImageRect(-50, -50, 100, 100, alertLBack, 1, 0)
 		gfx.Scale((1 / alertScale ^ 4.0), 1)
         gfx.BeginPath()
-
-		if (customColors == true) then
-			gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertLs, ((fadeTimer + 0.05) * alertScale), 0)
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertLt, ((fadeTimer + 0.35) * alertScale), 0)
-		else
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertL, ((fadeTimer + 0.3) * alertScale ^ 3.0), 0)
-		end
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(-50, -50, 100, 100, alertL, ((fadeTimer + 0.3) * alertScale ^ 3.0), 0)
 
         gfx.Restore()
     end
@@ -1712,31 +1659,13 @@ function drawAlerts(deltaTime)
         local alertScale = (-(alertTimers[2] ^ 2.0) + (1.5 * alertTimers[2])) * 5.0
         alertScale = math.min(alertScale, 1)
         gfx.BeginPath()
-
-		if (customColors == true) then
-			gfx.Scale((alertScale ^ 4.0), 1)
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertFill, 1, 0)
-			gfx.FillColor(math.min(r + 85, 255), math.min(g + 85, 255), math.min(b + 85, 255), 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertBack, 1, 0)
-		else
-		    gfx.FillColor(255, 255, 255)
-			gfx.Scale((alertScale ^ 4.0), 1)
-			gfx.ImageRect(-50, -50, 100, 100, alertRBack, 1, 0)
-		end
-			
+		gfx.FillColor(255, 255, 255)
+		gfx.Scale((alertScale ^ 4.0), 1)
+		gfx.ImageRect(-50, -50, 100, 100, alertRBack, 1, 0)
 		gfx.Scale((1 / alertScale ^ 4.0), 1)
         gfx.BeginPath()
-
-		if (customColors == true) then
-			gfx.FillColor(math.min(r + 55, 255), math.min(g + 55, 255), math.min(b + 55, 255), 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertRs, ((fadeTimer + 0.05) * alertScale), 0)
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertRt, ((fadeTimer + 0.35) * alertScale), 0)
-		else
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(-50, -50, 100, 100, alertR, ((fadeTimer + 0.3) * alertScale ^ 3.0), 0)
-		end
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(-50, -50, 100, 100, alertR, ((fadeTimer + 0.3) * alertScale ^ 3.0), 0)
 
         gfx.Restore()
     end
