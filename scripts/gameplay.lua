@@ -393,6 +393,8 @@ end
 
 		local startEndAnim = {false, false, false, false, false, false}
 
+		local holdTPF = 0
+
 		-- HOLD
 		function holdAnim(deltaTime, i)
 			gfx.Save()
