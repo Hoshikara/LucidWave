@@ -119,13 +119,13 @@ local scoreBackAnim = gfx.LoadSkinAnimation("anim_frames/score_arrows", (1.0 / 4
 local logoAnim = gfx.LoadSkinAnimation("anim_frames/logo", (1.0 / 60.0))
 
 local laserAnimDome = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 38.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 38.0))
+	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 42.0)),
+	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 42.0))
 }
 
 local laserAnimCritical = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 38.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 38.0))
+	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 42.0)),
+	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 42.0))
 }
 
 local laserCursorTail = {
@@ -409,12 +409,18 @@ end
 
 			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
 
-			if (holdAnimTimer[i] > (1.0 / 38.0)) then
+			if (holdAnimIndex[i] < 10) then
+				holdTPF = 30.0
+			else
+				holdTPF = 42.0
+			end
+
+			if (holdAnimTimer[i] > (1.0 / holdTPF)) then
 				holdAnimTimer[i] = 0
 				holdAnimIndex[i] = holdAnimIndex[i] + 1
 			end
 
-			if (holdAnimTimer[i] < (1.0 / 38.0)) then
+			if (holdAnimTimer[i] < (1.0 / holdTPF)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 				gfx.ImageRect(-213, -221, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
 				gfx.ImageRect(-213, -221, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
@@ -445,12 +451,12 @@ end
 
 			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
 
-			if (holdAnimTimer[i] > (1.0 / 38.0)) then
+			if (holdAnimTimer[i] > (1.0 / 30.0)) then
 				holdAnimTimer[i] = 0
 				holdEndAnimIndex[i] = holdEndAnimIndex[i] + 1
 			end
 
-			if (holdAnimTimer[i] < (1.0 / 38.0)) then
+			if (holdAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 				gfx.ImageRect(-213, -221, 426, 426, holdEndAnimFrames[holdEndAnimIndex[i]], 1.5, 0)
 			end
