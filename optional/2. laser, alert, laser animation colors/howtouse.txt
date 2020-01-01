@@ -1,0 +1,3 @@
+copy all files inside desired folder and paste into 'textures' folder, overwrite all
+
+find corresponding track in 'optional/1. track colors' and replace 'track.png' in 'textures' folder
