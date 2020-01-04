@@ -534,14 +534,14 @@ draw_search = function(x,y,w,h)
   
   gfx.BeginPath()
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE)
-  gfx.FillColor(0, 0, 0, 0)
+  gfx.FillColor(245, 65, 125)
 
   if searchIndex ~= (songwheel.searchInputActive and 0 or 1) then
       gfx.BeginPath()
 	  gfx.FillColor(0, 0, 0, 255)
 	  gfx.RoundedRect(225, 198.3, 382.2, 20, 10)
 	  gfx.Fill()
-	  gfx.FillColor(255, 255, 255)
+	  gfx.FillColor(245, 65, 125)
   end
   
   if searchSound ~= (songwheel.searchInputActive and 0 or 1) then
