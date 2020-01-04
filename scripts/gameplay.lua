@@ -1148,7 +1148,7 @@ function drawTrackInfo(deltaTime)
 
 		-- SCORE DIFFERENCE
 		if (displayScoreDiff == true) then
-			drawBestDiff(deltaTime, 253, 283)
+			drawBestDiff(deltaTime, 206, 285)
 		end
 	end
 
@@ -1171,27 +1171,48 @@ function drawBestDiff(deltaTime, x, y)
     end
 
     gfx.BeginPath()
-    gfx.FontSize(26)
 
     difference = score - gameplay.scoreReplays[1].currentScore
 
+	diffString = string.format("%08d", math.abs(difference))
+
     local prefix = "+ "
 
-    gfx.FillColor(135, 135, 255)
-    gfx.FontSize(30)
+    gfx.FillColor(170, 160, 255)
 
     if difference < 0 then 
         scorerank = false
-        gfx.FillColor(255, 85, 85)
-        difference = math.abs(difference)
+        gfx.FillColor(255, 90, 70)
         prefix = "- "
     elseif difference > 0 then
         scorerank = true
     end
 
+	local subStartPos = 0
+	local subEndPos = 0
+	local smallSubPos = 0
+
+	if ((math.abs(difference) >= 1000) and (math.abs(difference) < 100000)) then 
+		subStartPos = 4 subEndPos = 4
+	elseif ((math.abs(difference) >= 100000) and (math.abs(difference) < 1000000)) then 
+		subStartPos = 3 subEndPos = 4
+	elseif (math.abs(difference) >= 1000000) then 
+		subStartPos = 2 subEndPos = 4
+	end
+
+	if (math.abs(difference) == 0) then 
+		smallSubPos = -1 
+	else 
+		smallSubPos = -4 
+	end
+
     gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT)
-    gfx.FontSize(26)
-	gfx.Text(string.format("%s%01d", prefix, difference), (x - 53), (y + 31))
+    gfx.FontSize(24)
+	gfx.Text(prefix, (x - 115), (y + 27))
+	gfx.FontSize(28)
+	gfx.Text(string.sub(diffString, subStartPos, subEndPos), (x - 59), (y + 31))
+	gfx.FontSize(28 * 0.77)
+	gfx.Text(string.sub(diffString, smallSubPos), (x - 4), (y + 31))
 end
 
 function loadNumberImages(path)
