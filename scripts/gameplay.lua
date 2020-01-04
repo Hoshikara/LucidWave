@@ -368,7 +368,7 @@ end
 		function loadHoldCriticalAnimFrames(path)
 			local frames = {}
 
-			for i = 0, 153 do
+			for i = 0, 152 do
 				frames[i]  = gfx.CreateSkinImage(string.format("%s/%04d.png", path, i), 0)
 			end
 
@@ -427,7 +427,7 @@ end
 
 			delayCriticalStart[i] = delayCriticalStart[i] + deltaTime
 
-			if (delayCriticalStart[i] > (1.0 / 7.0)) then
+			if (delayCriticalStart[i] > (1.0 / 6.0)) then
 				holdCriticalAnimTimer[i] = holdCriticalAnimTimer[i] + deltaTime
 			end
 
@@ -444,20 +444,20 @@ end
 
 			if (holdAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-				gfx.ImageRect(-213, -221, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
-				gfx.ImageRect(-213, -221, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
+				gfx.ImageRect(-213, -219, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
+				gfx.ImageRect(-213, -219, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
 			end
 
 			if (holdCriticalAnimTimer[i] < (1.0 / 59.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
-				gfx.ImageRect(-213, -221, 426, 426, holdCriticalAnimFrames[holdCriticalAnimIndex[i]], 1.5, 0)
+				gfx.ImageRect(-213, -219, 426, 426, holdCriticalAnimFrames[holdCriticalAnimIndex[i]], 1.5, 0)
 			end
 
 			if (holdAnimIndex[i] == 80) then
 				holdAnimIndex[i] = 10
 			end
 
-			if (holdCriticalAnimIndex[i] == 153) then
+			if (holdCriticalAnimIndex[i] == 152) then
 				holdCriticalAnimIndex[i] = 10
 			end
 
@@ -487,7 +487,7 @@ end
 
 			if (holdEndAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-				gfx.ImageRect(-213, -221, 426, 426, holdEndAnimFrames[holdEndAnimIndex[i]], 1.5, 0)
+				gfx.ImageRect(-213, -219, 426, 426, holdEndAnimFrames[holdEndAnimIndex[i]], 1.5, 0)
 			end
 
 			if (holdEndAnimIndex[i] == 7) then
@@ -559,9 +559,9 @@ end
 
 			if (critAnimTimer[i][j] < (1.0 / 56.0)) then
 				if (critBT == true) then
-					gfx.ImageRect(-200, -206, 400, 400, critAnimFramesBT[critAnimIndex[i][j]], 1.2, 0)
+					gfx.ImageRect(-200, -205, 400, 400, critAnimFramesBT[critAnimIndex[i][j]], 1.2, 0)
 				elseif (critFX == true) then
-					gfx.ImageRect(-200, -206, 400, 400, critAnimFramesFX[critAnimIndex[i][j]], 1.2, 0)
+					gfx.ImageRect(-200, -205, 400, 400, critAnimFramesFX[critAnimIndex[i][j]], 1.2, 0)
 				end
 			end
 
@@ -635,9 +635,9 @@ end
 
 			if (nearAnimTimer[i][j] < (1.0 / 58.0)) then
 				if (nearBT == true) then
-					gfx.ImageRect(-200, -206, 400, 400, nearAnimFramesBT[nearAnimIndex[i][j]], 1.2, 0)
+					gfx.ImageRect(-200, -205, 400, 400, nearAnimFramesBT[nearAnimIndex[i][j]], 1.2, 0)
 				elseif (nearFX == true) then
-					gfx.ImageRect(-200, -206, 400, 400, nearAnimFramesFX[nearAnimIndex[i][j]], 1.2, 0)
+					gfx.ImageRect(-200, -205, 400, 400, nearAnimFramesFX[nearAnimIndex[i][j]], 1.2, 0)
 				end
 			end
 
