@@ -1192,7 +1192,7 @@ function drawBestDiff(deltaTime, x, y)
 	local subEndPos = 0
 	local smallSubPos = 0
 
-	if ((math.abs(difference) >= 1000) and (math.abs(difference) < 100000)) then 
+	if ((math.abs(difference) >= 10000) and (math.abs(difference) < 100000)) then 
 		subStartPos = 4 subEndPos = 4
 	elseif ((math.abs(difference) >= 100000) and (math.abs(difference) < 1000000)) then 
 		subStartPos = 3 subEndPos = 4
