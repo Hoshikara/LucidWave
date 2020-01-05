@@ -155,6 +155,7 @@ local displayUserInfo = game.GetSkinSetting("display_user_info")
 local displayChain = game.GetSkinSetting("display_chain")
 local displayVolforce = game.GetSkinSetting("display_volforce")
 local skillLevel = game.GetSkinSetting("skill_level")
+local clearEffect = game.GetSkinSetting("clear_effect")
 
 local difficulties = {
 	gfx.CreateSkinImage("difficulties/novice.png", 0),
@@ -1734,27 +1735,29 @@ local effectAlpha = 1
 local playEffect = true
 
 function drawPassEffect(deltaTime)
-	if (gameplay.gauge > 0.7) then
-		if playEffect == true then
+	if (clearEffect == true) then
+		if (gameplay.gauge > 0.7) then
+			if playEffect == true then
 
-			effectScale = effectScale + (deltaTime / 1.35) * 30
-			effectAlpha = math.max(effectAlpha - (deltaTime * 4), 0)
-			local eXY = -101 * effectScale
-			local eWH = 202 * effectScale
+				effectScale = effectScale + (deltaTime / 1.35) * 30
+				effectAlpha = math.max(effectAlpha - (deltaTime * 4), 0)
+				local eXY = -101 * effectScale
+				local eWH = 202 * effectScale
 
-			gfx.Save()
-			gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-			if portrait then
-				gfx.Translate((desw / 2), (desh / 2) - 110)
-			else
-				gfx.Translate((desw / 2), (desh / 2) - 35)
-			end
-			gfx.BeginPath()
-			gfx.FillColor(255, 255, 255)
-			gfx.ImageRect(eXY, eXY, eWH, eWH, passEffect, effectAlpha, 0)
-			gfx.Restore()
-			if (effectAlpha == 0) then
-				playEffect = false
+				gfx.Save()
+				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
+				if portrait then
+					gfx.Translate((desw / 2), (desh / 2) - 110)
+				else
+					gfx.Translate((desw / 2), (desh / 2) - 35)
+				end
+				gfx.BeginPath()
+				gfx.FillColor(255, 255, 255)
+				gfx.ImageRect(eXY, eXY, eWH, eWH, passEffect, effectAlpha, 0)
+				gfx.Restore()
+				if (effectAlpha == 0) then
+					playEffect = false
+				end
 			end
 		end
 	end

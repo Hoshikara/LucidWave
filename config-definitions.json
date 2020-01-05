@@ -22,6 +22,14 @@
 		"values": ["none", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "inf"]
 	},
 
+	"Clear Effect" : {"type" : "label"},
+	"clear_effect":
+	{
+		"type": "bool",
+		"label": "On/Off",
+		"default": true
+	},
+
 	"Display Chain" : {"type" : "label"},
 	"display_chain":
 	{
