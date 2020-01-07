@@ -133,11 +133,6 @@ local laserCursorTail = {
 	gfx.CreateSkinImage("laser_cursor_tail_r.png", 0)
 }
 
-local alertLBack = gfx.CreateSkinImage("alert_l_back.png", 0)
-local alertRBack = gfx.CreateSkinImage("alert_r_back.png", 0)
-local alertL = gfx.CreateSkinImage("alert_l.png", 0)
-local alertR = gfx.CreateSkinImage("alert_r.png", 0)
-
 local gaugeEffBack = gfx.CreateSkinImage("gauges/effective/gauge-back.png", 0)
 local gaugeEffFillNormalAnim = gfx.LoadSkinAnimation("gauges/effective/fill_normal_frames", (1.0 / 48.0))
 local gaugeEffFillPassAnim = gfx.LoadSkinAnimation("gauges/effective/fill_pass_frames", (1.0 / 48.0))
@@ -168,8 +163,6 @@ if (introTimer == nil) then
 	introTimer = 1
 	outroTimer = 0
 end
-
-local alertTimers = {-2, -2}
 
 local earlateTimer = 0
 local earlateColors = {{255, 255, 0}, {0, 255, 255}}
@@ -1671,63 +1664,126 @@ function drawEarlate(deltaTime)
 	gfx.Restore()
 end
 
-function drawAlerts(deltaTime)
-    alertTimers[1] = math.max(alertTimers[1] - deltaTime,-2)
-    alertTimers[2] = math.max(alertTimers[2] - deltaTime,-2)
+local startAlert = {false, false}
 
-	-- LEFT ALERT
-	if alertTimers[1] > 0 then
+laser_alert = function(isRight) 
+    if isRight then
+		startAlert[2] = true
+    else
+		startAlert[1] = true
+    end
+end
+
+function loadAlertFrames(path)
+	local frames = {}
+
+	for i = 0, 28 do
+		frames[i]  = gfx.CreateSkinImage(string.format("%s/%03d.png", path, i), 0)
+	end
+
+	return frames
+end
+
+local alertFrames = {{}, {}}
+
+alertFrames[1] = loadAlertFrames("laseralert_frames/left")
+
+alertFrames[2] = loadAlertFrames("laseralert_frames/right")
+
+local alertTimer = {0, 0}
+
+local alertIndex = {1, 1}
+
+local alertFlashLoop = {0, 0}
+
+function drawAlerts(deltaTime)
+	if startAlert[1] == true then
         gfx.Save()
+
         local posx = desw / 2 - 300
         local posy = desh * critLinePos[1] - 100
 
         if portrait then 
-            posy = desh * critLinePos[2] - 120
+            posy = desh * critLinePos[2] - 140
             posx = 65
         end
 
-        gfx.Translate(posx, posy)
-        r,g,b = game.GetLaserColor(0)
-        local alertScale = (-(alertTimers[1] ^ 2.0) + (1.5 * alertTimers[1])) * 5.0
-        alertScale = math.min(alertScale, 1)
+		gfx.Translate(posx, posy)
+
+		alertTimer[1] = alertTimer[1] + deltaTime
+
+		if (alertTimer[1] > (1.0 / 45.0)) then
+			alertTimer[1] = 0
+			alertIndex[1] = alertIndex[1] + 1
+		end
+
         gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.Scale((alertScale ^ 4.0), 1)
-		gfx.ImageRect(-50, -50, 100, 100, alertLBack, 1, 0)
-		gfx.Scale((1 / alertScale ^ 4.0), 1)
-        gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(-50, -50, 100, 100, alertL, ((fadeTimer + 0.3) * alertScale ^ 3.0), 0)
+		
+		if (alertTimer[1] < (1.0 / 45.0)) then
+			gfx.ImageRect(-58, -56, 116, 112, alertFrames[1][alertIndex[1]], 1, 0)
+		end
+
+		if alertIndex[1] == 28 then
+			startAlert[1] = false
+		end
+
+		if alertFlashLoop[1] == 5 then
+			alertIndex[1] = 24
+			alertFlashLoop[1] = 0
+		elseif (alertIndex[1] == 23) then
+			alertIndex[1] = 10
+			alertFlashLoop[1] = alertFlashLoop[1] + 1
+		end
 
         gfx.Restore()
-    end
+	else
+		alertTimer[1] = 0
+		alertIndex[1] = 1
+	end
 
-	-- RIGHT ALERT
-    if alertTimers[2] > 0 then
+	if startAlert[2] == true then
         gfx.Save()
+
         local posx = desw / 2 + 300
         local posy = desh * critLinePos[1] - 100
 
         if portrait then 
-            posy = desh * critLinePos[2] - 120
+            posy = desh * critLinePos[2] - 140
             posx = desw - 65
         end
 
-        gfx.Translate(posx, posy)
-        r,g,b = game.GetLaserColor(1)
-        local alertScale = (-(alertTimers[2] ^ 2.0) + (1.5 * alertTimers[2])) * 5.0
-        alertScale = math.min(alertScale, 1)
+		gfx.Translate(posx, posy)
+
+		alertTimer[2] = alertTimer[2] + deltaTime
+
+		if (alertTimer[2] > (1.0 / 45.0)) then
+			alertTimer[2] = 0
+			alertIndex[2] = alertIndex[2] + 1
+		end
+
         gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.Scale((alertScale ^ 4.0), 1)
-		gfx.ImageRect(-50, -50, 100, 100, alertRBack, 1, 0)
-		gfx.Scale((1 / alertScale ^ 4.0), 1)
-        gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(-50, -50, 100, 100, alertR, ((fadeTimer + 0.3) * alertScale ^ 3.0), 0)
+		
+		if (alertTimer[2] < (1.0 / 45.0)) then
+			gfx.ImageRect(-58, -56, 116, 112, alertFrames[2][alertIndex[2]], 1, 0)
+		end
+
+		if alertIndex[2] == 28 then
+			startAlert[2] = false
+		end
+
+		if alertFlashLoop[2] == 5 then
+			alertIndex[2] = 24
+			alertFlashLoop[2] = 0
+		elseif (alertIndex[2] == 23) then
+			alertIndex[2] = 10
+			alertFlashLoop[2] = alertFlashLoop[2] + 1
+		end
 
         gfx.Restore()
-    end
+	else
+		alertTimer[2] = 0
+		alertIndex[2] = 1
+	end
 end
 
 local effectScale = 1
@@ -1817,14 +1873,6 @@ end
 near_hit = function(wasLate) 
     late = wasLate
     earlateTimer = 0.75
-end
-
-laser_alert = function(isRight) 
-    if isRight and alertTimers[2] < -1.5 then 
-		alertTimers[2] = 1.5
-    elseif alertTimers[1] < -1.5 then 
-		alertTimers[1] = 1.5
-    end
 end
 
 gfx.ResetTransform()
