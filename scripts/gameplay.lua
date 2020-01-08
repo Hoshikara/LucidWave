@@ -228,7 +228,11 @@ function render(deltaTime)
 
     drawGauge(deltaTime)
     drawEarlate(deltaTime)
-    drawCombo(deltaTime)
+
+	if (displayChain == true) then
+		drawCombo(deltaTime)
+	end
+
     drawAlerts(deltaTime)
 	drawPassEffect(deltaTime)
 
@@ -1498,96 +1502,94 @@ function drawCombo(deltaTime)
 
 	local cW, cH = (300 / 8), (488 / 8)
 
-	if (displayChain == true) then
-		if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText_uc, 0.4, 0)
+	if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText_uc, 0.4, 0)
+	else
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText, 0.4, 0)
+	end
+
+	local posx = (desw - 1) / 2 + randBinary
+
+	if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
+		local digit = combo % 10
+
+		gfx.BeginPath()
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], 1, 0)
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], alpha, 0)
+
+		digit = math.floor(combo / 10) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 10 and 1 or 0.1, 0)
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and alpha or 0.1, 0)
+
+		digit = math.floor(combo / 100) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 100 and 1 or 0.1, 0)
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and alpha or 0.1, 0)
+
+		digit = math.floor(combo / 1000) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 1000 and 1 or 0.1, 0)
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and alpha or 0.1, 0)
+
+		cW, cH = (300 / 8) * comboScale, (488 / 8) * comboScale
+		combox = (300 / 8) * comboScale
+
+		if (combo >= comboBurstValue) then
+			comboBurstValue = comboBurstValue + 100
+			if (comboScaleTrigger == false) then
+				comboAlpha = 1
+			end
+			comboScaleTrigger = true
+		end
+	
+		if combo < 100 then
+			comboBurstValue = 100
+		end
+	
+		if ((comboScaleTrigger == true) and (comboScale < 3)) then
+			comboScale = comboScale + deltaTime * 6
+			comboAlpha = math.max(comboAlpha - deltaTime * 5, 0)
 		else
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText, 0.4, 0)
+			comboScale = 1
+			comboAlpha = 0
+			comboScaleTrigger = false
 		end
 
-		local posx = (desw - 1) / 2 + randBinary
+		gfx.BeginPath()
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-		if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
-			local digit = combo % 10
+		digit = math.floor(combo / 10) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-			gfx.BeginPath()
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], 1, 0)
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], alpha, 0)
+		digit = math.floor(combo / 100) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-			digit = math.floor(combo / 10) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 10 and 1 or 0.1, 0)
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and alpha or 0.1, 0)
+		digit = math.floor(combo / 1000) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-			digit = math.floor(combo / 100) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 100 and 1 or 0.1, 0)
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and alpha or 0.1, 0)
+	else
+		local digit = combo % 10
 
-			digit = math.floor(combo / 1000) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 1000 and 1 or 0.1, 0)
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and alpha or 0.1, 0)
+		gfx.BeginPath()
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], 1, 0)
 
-			cW, cH = (300 / 8) * comboScale, (488 / 8) * comboScale
-			combox = (300 / 8) * comboScale
+		digit = math.floor(combo / 10) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and 1 or 0.1, 0)
 
-			if (combo >= comboBurstValue) then
-				comboBurstValue = comboBurstValue + 100
-				if (comboScaleTrigger == false) then
-					comboAlpha = 1
-				end
-				comboScaleTrigger = true
-			end
-	
-			if combo < 100 then
-				comboBurstValue = 100
-			end
-	
-			if ((comboScaleTrigger == true) and (comboScale < 3)) then
-				comboScale = comboScale + deltaTime * 6
-				comboAlpha = math.max(comboAlpha - deltaTime * 5, 0)
-			else
-				comboScale = 1
-				comboAlpha = 0
-				comboScaleTrigger = false
-			end
+		digit = math.floor(combo / 100) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and 1 or 0.1, 0)
 
-			gfx.BeginPath()
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-			digit = math.floor(combo / 10) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-			digit = math.floor(combo / 100) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-			digit = math.floor(combo / 1000) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-		else
-			local digit = combo % 10
-
-			gfx.BeginPath()
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], 1, 0)
-
-			digit = math.floor(combo / 10) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and 1 or 0.1, 0)
-
-			digit = math.floor(combo / 100) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and 1 or 0.1, 0)
-
-			digit = math.floor(combo / 1000) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and 1 or 0.1, 0)
-		end
+		digit = math.floor(combo / 1000) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and 1 or 0.1, 0)
 	end
 
 	gfx.Restore()
@@ -1677,7 +1679,7 @@ end
 function loadAlertFrames(path)
 	local frames = {}
 
-	for i = 0, 28 do
+	for i = 0, 29 do
 		frames[i]  = gfx.CreateSkinImage(string.format("%s/%03d.png", path, i), 0)
 	end
 
@@ -1718,17 +1720,18 @@ function drawAlerts(deltaTime)
 		end
 
         gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
 		
 		if (alertTimer[1] < (1.0 / 45.0)) then
 			gfx.ImageRect(-58, -56, 116, 112, alertFrames[1][alertIndex[1]], 1, 0)
 		end
 
-		if alertIndex[1] == 28 then
+		if alertIndex[1] == 29 then
 			startAlert[1] = false
 		end
 
 		if alertFlashLoop[1] == 5 then
-			alertIndex[1] = 24
+			alertIndex[1] = 25
 			alertFlashLoop[1] = 0
 		elseif (alertIndex[1] == 23) then
 			alertIndex[1] = 10
@@ -1762,17 +1765,18 @@ function drawAlerts(deltaTime)
 		end
 
         gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
 		
 		if (alertTimer[2] < (1.0 / 45.0)) then
 			gfx.ImageRect(-58, -56, 116, 112, alertFrames[2][alertIndex[2]], 1, 0)
 		end
 
-		if alertIndex[2] == 28 then
+		if alertIndex[2] == 29 then
 			startAlert[2] = false
 		end
 
 		if alertFlashLoop[2] == 5 then
-			alertIndex[2] = 24
+			alertIndex[2] = 25
 			alertFlashLoop[2] = 0
 		elseif (alertIndex[2] == 23) then
 			alertIndex[2] = 10
