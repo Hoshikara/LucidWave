@@ -1,4 +1,4 @@
-local backgroundImage = gfx.CreateSkinImage("song_select/bg.jpg", 1)
+local backgroundImage = gfx.CreateSkinImage("song_select/bg.jpg", 0)
 
 render = function(deltaTime)
     gfx.ResetTransform()

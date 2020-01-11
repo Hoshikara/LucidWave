@@ -79,95 +79,10 @@ local landscape
 local desw, desh 
 local scale 
 
-local jacketFallback = gfx.CreateSkinImage("song_select/jacket_loading.png", 0)
-local bottomFill = gfx.CreateSkinImage("console/console.png", 0)
-local bottomFillL = gfx.CreateSkinImage("console/console_l.png", 0)
-local topFill = gfx.CreateSkinImage("fill_top.png", 0)
-local topFillL = gfx.CreateSkinImage("fill_top_l.png", 0)
-local critBarAnim = gfx.CreateSkinImage("crit_anim.png", 0)
-local critBar = gfx.CreateSkinImage("crit_bar.png", 0)
-local critBarGlow = gfx.CreateSkinImage("crit_bar_glow.png", 0)
-local critConsole = gfx.CreateSkinImage("crit_console.png", 0)
-local laserCursor = gfx.CreateSkinImage("pointer.png", 0)
-local laserCursorOverlay = gfx.CreateSkinImage("pointer_overlay.png", 0)
-local appealCard = gfx.CreateSkinImage("appeal_card.png", 0)
-local trackinfoBack = gfx.CreateSkinImage("trackinfo_back.png", 0)
-local progressFill = gfx.CreateSkinImage("progress_fill.png", 0)
-local progressArrow = gfx.CreateSkinImage("progress_arrow.png", 0)
-local scoreBack = gfx.CreateSkinImage("score_back.png", 0)
-local userBack = gfx.CreateSkinImage("userpanel_back.png", 0)
-local volforce = gfx.CreateSkinImage("volforce.png", 0)
-local passEffect = gfx.CreateSkinImage("pass_effect.png", 0)
-
-local dan = {
-	gfx.CreateSkinImage("dan/none.png", 0),
-	gfx.CreateSkinImage("dan/1.png", 0),
-	gfx.CreateSkinImage("dan/2.png", 0),
-	gfx.CreateSkinImage("dan/3.png", 0),
-	gfx.CreateSkinImage("dan/4.png", 0),
-	gfx.CreateSkinImage("dan/5.png", 0),
-	gfx.CreateSkinImage("dan/6.png", 0),
-	gfx.CreateSkinImage("dan/7.png", 0),
-	gfx.CreateSkinImage("dan/8.png", 0),
-	gfx.CreateSkinImage("dan/9.png", 0),
-	gfx.CreateSkinImage("dan/10.png", 0),
-	gfx.CreateSkinImage("dan/11.png", 0),
-	gfx.CreateSkinImage("dan/inf.png", 0)
-}
-
-local scoreBackAnim = gfx.LoadSkinAnimation("anim_frames/score_arrows", (1.0 / 44.0))
-local logoAnim = gfx.LoadSkinAnimation("anim_frames/logo", (1.0 / 60.0))
-
-local laserAnimDome = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_l_dome", (1.0 / 30.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_r_dome", (1.0 / 30.0))
-}
-
-local laserAnimCritical = {
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 59.0)),
-	gfx.LoadSkinAnimation("hitanim_frames/laser_critical", (1.0 / 59.0))
-}
-
-local laserCursorTail = {
-	gfx.CreateSkinImage("laser_cursor_tail_l.png", 0),
-	gfx.CreateSkinImage("laser_cursor_tail_r.png", 0)
-}
-
-local gaugeEffBack = gfx.CreateSkinImage("gauges/effective/gauge-back.png", 0)
-local gaugeEffFillNormalAnim = gfx.LoadSkinAnimation("gauges/effective/fill_normal_frames", (1.0 / 48.0))
-local gaugeEffFillPassAnim = gfx.LoadSkinAnimation("gauges/effective/fill_pass_frames", (1.0 / 48.0))
-
-local gaugeExcBack = gfx.CreateSkinImage("gauges/excessive/gauge-back.png", 0)
-local gaugeExcFillNormal = gfx.CreateSkinImage("gauges/excessive/gauge-fill.png", 0)
-local gaugeExcFillPass = gfx.CreateSkinImage("gauges/excessive/gauge-fill.png", 0)
-
-local gaugePercentBack = gfx.CreateSkinImage("gaugep_back.png", 0)
-
-local earlatePos = game.GetSkinSetting("earlate_position")
-local userName = game.GetSkinSetting("username")
-local displayScoreDiff = game.GetSkinSetting("display_score_diff")
-local displayUserInfo = game.GetSkinSetting("display_user_info")
-local displayChain = game.GetSkinSetting("display_chain")
-local displayVolforce = game.GetSkinSetting("display_volforce")
-local skillLevel = game.GetSkinSetting("skill_level")
-local clearEffect = game.GetSkinSetting("clear_effect")
-
-local difficulties = {
-	gfx.CreateSkinImage("difficulties/novice.png", 0),
-	gfx.CreateSkinImage("difficulties/advanced.png", 0),
-	gfx.CreateSkinImage("difficulties/exhaust.png", 0),
-	gfx.CreateSkinImage("difficulties/maximum.png", 0)
-}
-
 if (introTimer == nil) then
-	introTimer = 1
+	introTimer = 2
 	outroTimer = 0
 end
-
-local earlateTimer = 0
-local earlateColors = {{255, 255, 0}, {0, 255, 255}}
-
-local critBarAnimTimer = 0
 
 local genericTimer = 0
 local fadeTimer = 0
@@ -175,18 +90,16 @@ local fadeTimer = 0
 local score = 0
 local combo = 0
 local maxCombo = 0
-local maxChain = 0
 local randBinary = math.random(0, 1)
 local jacket = nil
 local critLinePos = {0.95, 0.73}
-local songInfoWidth = 400
-local jacketWidth = 72.5
-local comboScale = 0
 local late = false
 local title = nil
 local artist = nil
 local diffNames = {"NOVICE", "ADVANCED", "EXHAUST", "MAXIMUM"}
 local clearTexts = {"TRACK CRASH", "TRACK COMPLETE", "TRACK COMPLETE", "ULTIMATE CHAIN", "PERFECT"}
+
+local displayChain = game.GetSkinSetting("display_chain")
 
 function IsUserInputActive(lane)
     if (lane < 7) then
@@ -221,21 +134,20 @@ function render(deltaTime)
 		yshift = DrawBanner(deltaTime) 
 	end
 
-    gfx.Translate(0, yshift - 150 * math.max(introTimer - 1, 0))
+    gfx.Translate(0, yshift)
     drawTrackInfo(deltaTime)
     drawScore(deltaTime)
-    gfx.Translate(0, -yshift + 150 * math.max(introTimer - 1, 0))
+    gfx.Translate(0, -yshift)
 
     drawGauge(deltaTime)
     drawEarlate(deltaTime)
-    drawCombo(deltaTime)
+
+	if (displayChain == true) then
+		drawCombo(deltaTime)
+	end
+
     drawAlerts(deltaTime)
 	drawPassEffect(deltaTime)
-
-    if (introTimer > 0) then
-        gfx.FillColor(0, 0, 0, math.floor(255 * math.min(introTimer, 1)))
-        gfx.FastRect(-1, 0, (resx * 2), (resy * 2))
-    end
 
 	genericTimer = genericTimer + deltaTime
 	fadeTimer = math.abs(0.5 * math.cos(genericTimer * 10))
@@ -255,6 +167,14 @@ function GetCritLineCenteringOffset()
     local dvy = math.sin(gameplay.critLine.rotation)
     return math.sqrt(dvx * dvx + dvy * dvy) * distFromCenter
 end
+
+
+local critBarAnim = gfx.CreateSkinImage("gameplay/crit_bar/crit_anim.png", 0)
+local critBar = gfx.CreateSkinImage("gameplay/crit_bar/crit_bar.png", 0)
+local critBarGlow = gfx.CreateSkinImage("gameplay/crit_bar/crit_bar_glow.png", 0)
+local critConsole = gfx.CreateSkinImage("gameplay/crit_bar/crit_console.png", 0)
+
+local critBarAnimTimer = 0
 
 function render_crit_base(deltaTime)
     ResetLayoutInformation()
@@ -338,7 +258,7 @@ end
 
 -- HIT ANIMATIONS
 	local hitLane = 0
-
+	
 	function hitAnimationTransform(hitLane)
 		local n = hitLane + 0.5
 		local x = gameplay.critLine.line.x1 + (gameplay.critLine.line.x2 - gameplay.critLine.line.x1) * (n / 6)
@@ -379,13 +299,13 @@ end
 			return frames
 		end
 
-		local holdInnerAnimFrames = loadHoldAnimFrames("hitanim_frames/hold_inner")
+		local holdInnerAnimFrames = loadHoldAnimFrames("gameplay/hit_animation_frames/hold_inner")
 
-		local holdDomeAnimFrames = loadHoldAnimFrames("hitanim_frames/hold_dome")
+		local holdDomeAnimFrames = loadHoldAnimFrames("gameplay/hit_animation_frames/hold_dome")
 
-		local holdCriticalAnimFrames = loadHoldCriticalAnimFrames("hitanim_frames/hold_critical")
+		local holdCriticalAnimFrames = loadHoldCriticalAnimFrames("gameplay/hit_animation_frames/hold_critical")
 
-		local holdEndAnimFrames = loadHoldEndAnimFrames("hitanim_frames/hold_end")
+		local holdEndAnimFrames = loadHoldEndAnimFrames("gameplay/hit_animation_frames/hold_end")
 
 		local holdAnimTimer = {0, 0, 0, 0, 0, 0}
 
@@ -503,40 +423,35 @@ end
 			return frames
 		end
 
-		local critAnimFramesBT = loadCritAnimFrames("hitanim_frames/critical_bt")
+		local critAnimFramesBT = loadCritAnimFrames("gameplay/hit_animation_frames/critical_bt")
 
-		local critAnimFramesFX = loadCritAnimFrames("hitanim_frames/critical_fx")
+		local critAnimTimerBT = {{}, {}, {}, {}}
 
-		local critAnimQueue = {{}, {}, {}, {}, {}, {}}
+		local critAnimIndexBT = {{}, {}, {}, {}}
 
-		local critAnimTimer = {{}, {}, {}, {}, {}, {}}
+		local startCritAnimBT = {{}, {}, {}, {}}
 
-		local critAnimIndex = {{}, {}, {}, {}, {}, {}}
-
-		local startCritAnim = {{}, {}, {}, {}, {}, {}}
-
-		local critBT = false
-
-		local critFX = false
-
-		for i = 1, 6 do
+		for i = 1, 4 do
 			for j = 1, 6 do
-				critAnimQueue[i][j] = 1
-				critAnimTimer[i][j] = 0
-				critAnimIndex[i][j] = 1
-				startCritAnim[i][j] = false
+				critAnimTimerBT[i][j] = 0
+				critAnimIndexBT[i][j] = 1
+				startCritAnimBT[i][j] = false
 			end
 		end
 
-		function critAnim(deltaTime, i, j)
+		local critAnimFramesFX = loadCritAnimFrames("gameplay/hit_animation_frames/critical_fx")
+
+		local critAnimTimerFX = {0, 0}
+
+		local critAnimIndexFX = {1, 1}
+
+		local startCritAnimFX = {false, false}
+
+		function critAnimBT(deltaTime, i, j)
 			gfx.Save()
 
-			if (i == 1) then hitLane = 1 critBT = true critFX = false
-			elseif (i == 2) then hitLane = 2 critBT = true critFX = false
-			elseif (i == 3) then hitLane = 3 critBT = true critFX = false
-			elseif (i == 4) then hitLane = 4 critBT = true critFX = false
-			elseif (i == 5) then hitLane = 1.5 critFX = true critBT = false
-			elseif (i == 6) then hitLane = 3.5 critFX = true critBT = false
+			if (i == 1) then hitLane = 1 elseif (i == 2) then hitLane = 2 
+			elseif (i == 3) then hitLane = 3 elseif (i == 4) then hitLane = 4 
 			end
 
 			hitAnimationTransform(hitLane)
@@ -544,25 +459,51 @@ end
 			gfx.BeginPath()
 			gfx.FillColor(255, 255, 255)
 
-			critAnimTimer[i][j] = critAnimTimer[i][j] + deltaTime
+			critAnimTimerBT[i][j] = critAnimTimerBT[i][j] + deltaTime
 
-			if (critAnimTimer[i][j] > (1.0 / 56.0)) then
-				critAnimTimer[i][j] = 0
-				critAnimIndex[i][j] = critAnimIndex[i][j] + 1
+			if (critAnimTimerBT[i][j] > (1.0 / 56.0)) then
+				critAnimTimerBT[i][j] = 0
+				critAnimIndexBT[i][j] = critAnimIndexBT[i][j] + 1
 			end
 
-			if (critAnimTimer[i][j] < (1.0 / 56.0)) then
-				if (critBT == true) then
-					gfx.ImageRect(-200, -205, 400, 400, critAnimFramesBT[critAnimIndex[i][j]], 1.2, 0)
-				elseif (critFX == true) then
-					gfx.ImageRect(-200, -205, 400, 400, critAnimFramesFX[critAnimIndex[i][j]], 1.2, 0)
-				end
+			if (critAnimTimerBT[i][j] < (1.0 / 56.0)) then
+				gfx.ImageRect(-200, -205, 400, 400, critAnimFramesBT[critAnimIndexBT[i][j]], 1.2, 0)
 			end
 
-			if (critAnimIndex[i][j] == 17) then
-				startCritAnim[i][j] = false
-				critAnimTimer[i][j] = 0
-				critAnimIndex[i][j] = 1
+			if (critAnimIndexBT[i][j] == 17) then
+				startCritAnimBT[i][j] = false
+				critAnimTimerBT[i][j] = 0
+				critAnimIndexBT[i][j] = 1
+			end
+
+			gfx.Restore()
+		end
+
+		function critAnimFX(deltaTime, i)
+			gfx.Save()
+
+			if (i == 1) then hitLane = 1.5 elseif (i == 2) then hitLane = 3.5 end
+
+			hitAnimationTransform(hitLane)
+
+			gfx.BeginPath()
+			gfx.FillColor(255, 255, 255)
+
+			critAnimTimerFX[i] = critAnimTimerFX[i] + deltaTime
+
+			if (critAnimTimerFX[i] > (1.0 / 56.0)) then
+				critAnimTimerFX[i] = 0
+				critAnimIndexFX[i] = critAnimIndexFX[i] + 1
+			end
+
+			if (critAnimTimerFX[i] < (1.0 / 56.0)) then
+				gfx.ImageRect(-200, -205, 400, 400, critAnimFramesFX[critAnimIndexFX[i]], 1.2, 0)
+			end
+
+			if (critAnimIndexFX[i] == 17) then
+				startCritAnimFX[i] = false
+				critAnimTimerFX[i] = 0
+				critAnimIndexFX[i] = 1
 			end
 
 			gfx.Restore()
@@ -579,40 +520,35 @@ end
 			return frames
 		end
 
-		local nearAnimFramesBT = loadNearAnimFrames("hitanim_frames/near_bt")
+		local nearAnimFramesBT = loadNearAnimFrames("gameplay/hit_animation_frames/near_bt")
 
-		local nearAnimFramesFX = loadNearAnimFrames("hitanim_frames/near_fx")
+		local nearAnimTimerBT = {{}, {}, {}, {}, {}, {}}
 
-		local nearAnimQueue = {{}, {}, {}, {}, {}, {}}
+		local nearAnimIndexBT = {{}, {}, {}, {}, {}, {}}
 
-		local nearAnimTimer = {{}, {}, {}, {}, {}, {}}
+		local startNearAnimBT = {{}, {}, {}, {}, {}, {}}
 
-		local nearAnimIndex = {{}, {}, {}, {}, {}, {}}
-
-		local startNearAnim = {{}, {}, {}, {}, {}, {}}
-
-		local nearBT = false
-
-		local nearFX = false
-
-		for i = 1, 6 do
+		for i = 1, 4 do
 			for j = 1, 6 do
-				nearAnimQueue[i][j] = 1
-				nearAnimTimer[i][j] = 0
-				nearAnimIndex[i][j] = 1
-				startNearAnim[i][j] = false
+				nearAnimTimerBT[i][j] = 0
+				nearAnimIndexBT[i][j] = 1
+				startNearAnimBT[i][j] = false
 			end
 		end
 
-		function nearAnim(deltaTime, i, j)
+		local nearAnimFramesFX = loadNearAnimFrames("gameplay/hit_animation_frames/near_fx")
+
+		local nearAnimTimerFX = {0, 0}
+
+		local nearAnimIndexFX = {1, 1}
+
+		local startNearAnimFX = {false, false}
+
+		function nearAnimBT(deltaTime, i, j)
 			gfx.Save()
 
-			if (i == 1) then hitLane = 1 nearBT = true nearFX = false
-			elseif (i == 2) then hitLane = 2 nearBT = true nearFX = false
-			elseif (i == 3) then hitLane = 3 nearBT = true nearFX = false
-			elseif (i == 4) then hitLane = 4 nearBT = true nearFX = false
-			elseif (i == 5) then hitLane = 1.5 nearBT = false nearFX = true
-			elseif (i == 6) then hitLane = 3.5 nearBT = false nearFX = true
+			if (i == 1) then hitLane = 1 elseif (i == 2) then hitLane = 2
+			elseif (i == 3) then hitLane = 3 elseif (i == 4) then hitLane = 4
 			end
 
 			hitAnimationTransform(hitLane)
@@ -620,25 +556,51 @@ end
 			gfx.BeginPath()
 			gfx.FillColor(255, 255, 255)
 
-			nearAnimTimer[i][j] = nearAnimTimer[i][j] + deltaTime
+			nearAnimTimerBT[i][j] = nearAnimTimerBT[i][j] + deltaTime
 
-			if (nearAnimTimer[i][j] > (1.0 / 58.0)) then
-				nearAnimTimer[i][j] = 0
-				nearAnimIndex[i][j] = nearAnimIndex[i][j] + 1
+			if (nearAnimTimerBT[i][j] > (1.0 / 58.0)) then
+				nearAnimTimerBT[i][j] = 0
+				nearAnimIndexBT[i][j] = nearAnimIndexBT[i][j] + 1
 			end
 
-			if (nearAnimTimer[i][j] < (1.0 / 58.0)) then
-				if (nearBT == true) then
-					gfx.ImageRect(-200, -205, 400, 400, nearAnimFramesBT[nearAnimIndex[i][j]], 1.2, 0)
-				elseif (nearFX == true) then
-					gfx.ImageRect(-200, -205, 400, 400, nearAnimFramesFX[nearAnimIndex[i][j]], 1.2, 0)
-				end
+			if (nearAnimTimerBT[i][j] < (1.0 / 58.0)) then
+				gfx.ImageRect(-200, -205, 400, 400, nearAnimFramesBT[nearAnimIndexBT[i][j]], 1.2, 0)
 			end
 
-			if (nearAnimIndex[i][j] == 21) then
-				startNearAnim[i][j] = false
-				nearAnimTimer[i][j] = 0
-				nearAnimIndex[i][j] = 1
+			if (nearAnimIndexBT[i][j] == 21) then
+				nearAnimTimerBT[i][j] = 0
+				nearAnimIndexBT[i][j] = 1
+				startNearAnimBT[i][j] = false
+			end
+	
+			gfx.Restore()
+		end
+
+		function nearAnimFX(deltaTime, i)
+			gfx.Save()
+
+			if (i == 1) then hitLane = 1.5 elseif (i == 2) then hitLane = 3.5 end
+
+			hitAnimationTransform(hitLane)
+
+			gfx.BeginPath()
+			gfx.FillColor(255, 255, 255)
+
+			nearAnimTimerFX[i] = nearAnimTimerFX[i] + deltaTime
+
+			if (nearAnimTimerFX[i] > (1.0 / 58.0)) then
+				nearAnimTimerFX[i] = 0
+				nearAnimIndexFX[i] = nearAnimIndexFX[i] + 1
+			end
+
+			if (nearAnimTimerFX[i] < (1.0 / 58.0)) then
+				gfx.ImageRect(-200, -205, 400, 400, nearAnimFramesFX[nearAnimIndexFX[i]], 1.2, 0)
+			end
+
+			if (nearAnimIndexFX[i] == 21) then
+				nearAnimTimerFX[i] = 0
+				nearAnimIndexFX[i] = 1
+				startNearAnimFX[i] = false
 			end
 	
 			gfx.Restore()
@@ -659,13 +621,11 @@ end
 
 		local laserEndAnimOuterFrames = {{}, {}}
 
-		laserEndAnimInnerFrames[1] = loadLaserEndAnimFrames("hitanim_frames/laser_end_l_inner")
-		laserEndAnimInnerFrames[2] = loadLaserEndAnimFrames("hitanim_frames/laser_end_r_inner")
+		laserEndAnimInnerFrames[1] = loadLaserEndAnimFrames("gameplay/hit_animation_frames/laser_end_l_inner")
+		laserEndAnimInnerFrames[2] = loadLaserEndAnimFrames("gameplay/hit_animation_frames/laser_end_r_inner")
 
-		laserEndAnimOuterFrames[1] = loadLaserEndAnimFrames("hitanim_frames/laser_end_l_outer")
-		laserEndAnimOuterFrames[2] = loadLaserEndAnimFrames("hitanim_frames/laser_end_r_outer")
-
-		local laserEndAnimQueue = {{}, {}}
+		laserEndAnimOuterFrames[1] = loadLaserEndAnimFrames("gameplay/hit_animation_frames/laser_end_l_outer")
+		laserEndAnimOuterFrames[2] = loadLaserEndAnimFrames("gameplay/hit_animation_frames/laser_end_r_outer")
 
 		local laserEndAnimTimer = {{}, {}}
 
@@ -675,7 +635,6 @@ end
 
 		for i = 1, 2 do
 			for j = 1, 6 do
-				laserEndAnimQueue[i][j] = 1
 				laserEndAnimTimer[i][j] = 0
 				laserEndAnimIndex[i][j] = 1
 				startLaserEndAnim[i][j] = false
@@ -711,9 +670,9 @@ end
 			end
 
 			if (laserEndAnimIndex[i][j] == 12) then
-				startLaserEndAnim[i][j] = false
 				laserEndAnimTimer[i][j] = 0
 				laserEndAnimIndex[i][j] = 1
+				startLaserEndAnim[i][j] = false
 			end
 
 			gfx.Restore()
@@ -728,19 +687,19 @@ end
 		end
 	end
 
-	function buttonCritical(i)
-		for j = 1, 6 do
-			if (startCritAnim[i][j] == false) then
-				startCritAnim[i][j] = true
+	function buttonCriticalBT(i)
+		for j = 1, 4 do
+			if (startCritAnimBT[i][j] == false) then
+				startCritAnimBT[i][j] = true
 				break
 			end
 		end
 	end
 
-	function buttonNear(i)
-		for j = 1, 6 do
-			if (startNearAnim[i][j] == false) then
-				startNearAnim[i][j] = true
+	function buttonNearBT(i)
+		for j = 1, 4 do
+			if (startNearAnimBT[i][j] == false) then
+				startNearAnimBT[i][j] = true
 				break
 			end
 		end
@@ -748,43 +707,72 @@ end
 
 	function button_hit(button, rating, delta)
 		if ((button == game.BUTTON_BTA) and (rating == 2)) then
-			buttonCritical(1)
+			buttonCriticalBT(1)
 		end
 		if ((button == game.BUTTON_BTB) and (rating == 2)) then
-			buttonCritical(2)
+			buttonCriticalBT(2)
 		end
 		if ((button == game.BUTTON_BTC) and (rating == 2)) then
-			buttonCritical(3)
+			buttonCriticalBT(3)
 		end
 		if ((button == game.BUTTON_BTD) and (rating == 2)) then
-			buttonCritical(4)
+			buttonCriticalBT(4)
 		end
 		if ((button == game.BUTTON_FXL) and (rating == 2)) then
-			buttonCritical(5)
+			startCritAnimFX[1] = true
+			critAnimTimerFX[1] = 0
+			critAnimIndexFX[1] = 1
 		end
 		if ((button == game.BUTTON_FXR) and (rating == 2)) then
-			buttonCritical(6)
+			startCritAnimFX[2] = true
+			critAnimTimerFX[2] = 0
+			critAnimIndexFX[2] = 1
 		end
 
 		if ((button == game.BUTTON_BTA) and (rating == 1)) then
-			buttonNear(1)
+			buttonNearBT(1)
 		end
 		if ((button == game.BUTTON_BTB) and (rating == 1)) then
-			buttonNear(2)
+			buttonNearBT(2)
 		end
 		if ((button == game.BUTTON_BTC) and (rating == 1)) then
-			buttonNear(3)
+			buttonNearBT(3)
 		end
 		if ((button == game.BUTTON_BTD) and (rating == 1)) then
-			buttonNear(4)
+			buttonNearBT(4)
 		end
 		if ((button == game.BUTTON_FXL) and (rating == 1)) then
-			buttonNear(5)
+			startNearAnimFX[1] = true
+			nearAnimTimerFX[1] = 0
+			nearAnimIndexFX[1] = 1
 		end
 		if ((button == game.BUTTON_FXR) and (rating == 1)) then
-			buttonNear(6)
+			startNearAnimFX[2] = true
+			nearAnimTimerFX[2] = 0
+			nearAnimIndexFX[2] = 1
 		end
 	end
+
+local consolePortrait = gfx.CreateSkinImage("gameplay/console/console_p.png", 0)
+local consoleLandscape = gfx.CreateSkinImage("gameplay/console/console_l.png", 0)
+
+local laserCursor = gfx.CreateSkinImage("gameplay/laser/pointer.png", 0)
+local laserCursorOverlay = gfx.CreateSkinImage("gameplay/laser/pointer_overlay.png", 0)
+
+local laserAnimDome = {
+	gfx.LoadSkinAnimation("gameplay/hit_animation_frames/laser_l_dome", (1.0 / 30.0)),
+	gfx.LoadSkinAnimation("gameplay/hit_animation_frames/laser_r_dome", (1.0 / 30.0))
+}
+
+local laserAnimCritical = {
+	gfx.LoadSkinAnimation("gameplay/hit_animation_frames/laser_critical", (1.0 / 59.0)),
+	gfx.LoadSkinAnimation("gameplay/hit_animation_frames/laser_critical", (1.0 / 59.0))
+}
+
+local laserCursorTail = {
+	gfx.CreateSkinImage("gameplay/laser/laser_cursor_tail_l.png", 0),
+	gfx.CreateSkinImage("gameplay/laser/laser_cursor_tail_r.png", 0)
+}
 
 local insertFunction = {false, false}
 
@@ -792,20 +780,32 @@ function render_crit_overlay(deltaTime)
 
 	-- HIT ANIMATIONS
 		-- CRITICAL
-			for i = 1, 6 do
+			for i = 1, 4 do
 				for j = 1, 6 do
-					if (startCritAnim[i][j] == true) then
-						critAnim(deltaTime, i, j)
+					if (startCritAnimBT[i][j] == true) then
+						critAnimBT(deltaTime, i, j)
 					end
+				end
+			end
+
+			for i = 1, 2 do
+				if (startCritAnimFX[i] == true) then
+					critAnimFX(deltaTime, i)
 				end
 			end
 		
 		-- NEAR
-			for i = 1, 6 do
+			for i = 1, 4 do
 				for j = 1, 6 do
-					if (startNearAnim[i][j] == true) then
-						nearAnim(deltaTime, i, j)
+					if (startNearAnimBT[i][j] == true) then
+						nearAnimBT(deltaTime, i, j)
 					end
+				end
+			end
+
+			for i = 1, 2 do
+				if (startNearAnimFX[i] == true) then
+					nearAnimFX(deltaTime, i)
 				end
 			end
 
@@ -840,7 +840,7 @@ function render_crit_overlay(deltaTime)
 		gfx.Save()
 		gfx.Translate(xOffset * 0.5, 0)
 
-		local bfw, bfh = gfx.ImageSize(bottomFill)
+		local bfw, bfh = gfx.ImageSize(consolePortrait)
 
 		local distBetweenKnobs = 0.446
 		local distCritVertical = -0.014
@@ -857,12 +857,12 @@ function render_crit_overlay(deltaTime)
 			if portrait then
 				gfx.Scale((1 * 0.95), (1 * 0.95))
 				gfx.FillColor(255, 255, 255)
-				gfx.DrawRect(bottomFill, io_x, io_y, io_w, io_h)
+				gfx.DrawRect(consolePortrait, io_x, io_y, io_w, io_h)
 				gfx.Scale((1 / 0.95), (1 / 0.95))
 			else
 				gfx.Scale((1 * 0.85), (1 * 0.85))
 				gfx.FillColor(255, 255, 255)
-				gfx.DrawRect(bottomFillL, io_x, (io_y - 90), io_w, io_h)
+				gfx.DrawRect(consoleLandscape, io_x, (io_y - 90), io_w, io_h)
 				gfx.Scale((1 / 0.85), (1 / 0.85))
 			end
 
@@ -966,6 +966,7 @@ function render_crit_overlay(deltaTime)
 						gfx.ImageRect(pos - lCXY, -lCXY, lCWH, lCWH, laserCursorTail[2], 1, 0)
 
 						gfx.Restore()
+
 					end
 
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_SOURCE_OVER)
@@ -981,15 +982,114 @@ function render_crit_overlay(deltaTime)
 			gfx.ResetTransform()
 end
 
+
+local topFillPortrait = gfx.CreateSkinImage("gameplay/banner/top_fill_p.png", 0)
+local topFillLandscape = gfx.CreateSkinImage("gameplay/banner/top_fill_l.png", 0)
+local scan = gfx.CreateSkinImage("gameplay/banner/scan.png", 0)
+local scanGlow = gfx.CreateSkinImage("gameplay/banner/scan_glow.png", 0)
+
+local visualizer = gfx.LoadSkinAnimation("gameplay/banner/visualizer_frames", (1.0 / 20.0))
+
+local scanStartTimer = 0
+local scanAnimTimer = 1
+local scanAlpha = 0
+local scanGlowTimer = 0
+
 function DrawBanner(deltaTime)
-    local bannerWidth, bannerHeight = gfx.ImageSize(topFill)
+    local bannerWidth, bannerHeight = gfx.ImageSize(topFillPortrait)
     local actualHeight = desw * (bannerHeight / bannerWidth)
 
     gfx.FillColor(255, 255, 255)
-    gfx.DrawRect(topFill, 0, 0, desw, actualHeight)
+    gfx.DrawRect(topFillPortrait, 0, 0, desw, actualHeight)
+
+	scanGlowTimer = scanGlowTimer + deltaTime
+
+	if (scanGlowTimer > 2) then
+		scanGlowTimer = 0
+	end
+
+	gfx.Save()
+	gfx.BeginPath()
+	gfx.FillColor(255, 255, 255)
+	gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
+	gfx.Scissor(0, (470 - (scanGlowTimer * 3) * 120), desw, (actualHeight / 6))
+	gfx.ImageRect(0, 0, desw, actualHeight, scanGlow, 1, 0)
+	gfx.ResetScissor()
+	gfx.Restore()
+	
+	scanStartTimer = scanStartTimer + deltaTime
+
+	if (scanStartTimer > 2) then
+		scanStartTimer = 0
+		scanAnimTimer = 1
+		scanAlpha = 0
+	end
+
+	if (scanStartTimer > 1) then
+		scanAnimTimer = scanAnimTimer - (deltaTime * 4)
+		scanAlpha = math.min(scanAlpha + (deltaTime * 4), 1)
+
+		local scanShift = 100 * scanAnimTimer
+
+		gfx.Save()
+		gfx.BeginPath()
+		gfx.Translate(0, scanShift)
+		gfx.FillColor(255, 255, 255)
+		gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
+		gfx.ImageRect(0, 0, desw, actualHeight, scan, scanAlpha, 0)
+		gfx.Restore()
+	end
+
+	local vW, vH = gfx.ImageSize(visualizer)
+
+	gfx.Save()
+	gfx.BeginPath()
+	gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
+	gfx.ImageRect(159, 92, (vW * 0.5), (vH * 0.5), visualizer, 1, 0)
+	gfx.TickAnimation(visualizer, deltaTime)
+	gfx.Restore()
 
     return actualHeight
 end
+
+local jacketFallback = gfx.CreateSkinImage("song_select/jacket_loading.png", 0)
+
+local trackinfoBack = gfx.CreateSkinImage("gameplay/track_info/track_info_back.png", 0)
+local progressFill = gfx.CreateSkinImage("gameplay/track_info/progress_fill.png", 0)
+local progressArrow = gfx.CreateSkinImage("gameplay/track_info/progress_arrow.png", 0)
+
+local difficulties = {
+	gfx.CreateSkinImage("gameplay/track_info/difficulties/novice.png", 0),
+	gfx.CreateSkinImage("gameplay/track_info/difficulties/advanced.png", 0),
+	gfx.CreateSkinImage("gameplay/track_info/difficulties/exhaust.png", 0),
+	gfx.CreateSkinImage("gameplay/track_info/difficulties/maximum.png", 0)
+}
+
+local userBack = gfx.CreateSkinImage("gameplay/user_panel/user_panel_back.png", 0)
+local appealCard = gfx.CreateSkinImage("gameplay/user_panel/appeal_card.png", 0)
+local volforce = gfx.CreateSkinImage("gameplay/user_panel/volforce.png", 0)
+
+local dan = {
+	gfx.CreateSkinImage("gameplay/user_panel/dan/none.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/1.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/2.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/3.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/4.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/5.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/6.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/7.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/8.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/9.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/10.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/11.png", 0),
+	gfx.CreateSkinImage("gameplay/user_panel/dan/inf.png", 0)
+}
+
+local userName = game.GetSkinSetting("username")
+local skillLevel = game.GetSkinSetting("skill_level")
+local displayScoreDiff = game.GetSkinSetting("display_score_diff")
+local displayUserInfo = game.GetSkinSetting("display_user_info")
+local displayVolforce = game.GetSkinSetting("display_volforce")
 
 function drawTrackInfo(deltaTime)
     if ((jacket == nil) or (jacket == jacketFallback)) then
@@ -1035,28 +1135,41 @@ function drawTrackInfo(deltaTime)
 
 	-- TRACK DIFFICULTY LEVEL
 	gfx.BeginPath()
-	gfx.FillColor(255, 255, 255)
 	gfx.FontSize(20)
+	gfx.FillColor(245, 65, 125)
+	gfx.Text(string.format("%02d", gameplay.level), 59, 101.8)
+	gfx.FillColor(55, 255, 255)
+	gfx.Text(string.format("%02d", gameplay.level), 59.8, 101)
+	gfx.FillColor(255, 255, 255)
 	gfx.Text(string.format("%02d", gameplay.level), 59, 101)
-	gfx.Fill()
+
 
 	-- JACKET
 	gfx.BeginPath()
 	gfx.FillColor(255, 255, 255)
-	gfx.ImageRect(10, 4, jacketWidth, jacketWidth, jacket, 1 ,0)
+	gfx.ImageRect(10, 4, 72.5, 72.5, jacket, 1 ,0)
 
 	-- BPM AND HI-SPEED
 	gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT)
+	gfx.FontSize(24)
+	gfx.FillColor(245, 65, 125)
+	gfx.Text(string.format("%.0f", gameplay.bpm), 245, 79.8)
+	gfx.FillColor(55, 255, 255)
+	gfx.Text(string.format("%.0f", gameplay.bpm), 245.8, 79)
 	gfx.FillColor(255, 255, 255)
-	gfx.FontSize(24) 
 	gfx.Text(string.format("%.0f", gameplay.bpm), 245, 79)
+	gfx.FillColor(245, 65, 125)
+	gfx.Text(string.format("%.1f", gameplay.hispeed), 245, 107.8)
+	gfx.FillColor(55, 255, 255)
+	gfx.Text(string.format("%.1f", gameplay.hispeed), 245.8, 107)
+	gfx.FillColor(255, 255, 255)
 	gfx.Text(string.format("%.1f", gameplay.hispeed), 245, 107)
 
 	-- TRACK TITLE
 	gfx.LoadSkinFont("arial.ttf")
 	gfx.TextAlign(gfx.TEXT_ALIGN_TOP + gfx.TEXT_ALIGN_CENTER)
 
-	local tW, tH = gfx.ImageSize(topFillL)
+	local tW, tH = gfx.ImageSize(topFillLandscape)
 
 	if portrait then
 		local trackTitle = gfx.CreateLabel(gameplay.title .. " / " .. gameplay.artist, 16, 0)
@@ -1066,7 +1179,7 @@ function drawTrackInfo(deltaTime)
 		gfx.DrawLabel(trackTitle, ((desw / 2) - 20), -123.5, 435)
 	else
 		gfx.BeginPath()
-		gfx.ImageRect((desw / 5) + 25, -31, tW/4, tH/4, topFillL, 1, 0)
+		gfx.ImageRect((desw / 5) + 25, -31, tW/4, tH/4, topFillLandscape, 1, 0)
 		local trackTitle = gfx.CreateLabel(gameplay.title .. " / " .. gameplay.artist, 16, 0)
 		gfx.FillColor(105, 105, 105)
 		gfx.DrawLabel(trackTitle, ((desw / 2) - 19.3), -28.3, 415)
@@ -1136,6 +1249,10 @@ function drawTrackInfo(deltaTime)
 
 		-- USERNAME
 		gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
+		gfx.FillColor(245, 65, 125)
+		gfx.DrawLabel(displayUser, 75, 266.8, 126)
+		gfx.FillColor(55, 255, 255)
+		gfx.DrawLabel(displayUser, 75.8, 266, 126)
 		gfx.FillColor(255, 255, 255)
 		gfx.DrawLabel(displayUser, 75, 266, 126)
 		gfx.FontSize(24)
@@ -1209,16 +1326,6 @@ function drawBestDiff(deltaTime, x, y)
 	gfx.Text(string.sub(diffString, smallSubPos), (x - 4), (y + 31))
 end
 
-function loadNumberImages(path)
-    local image = {}
-    for i = 0, 9 do
-        image[i + 1] = gfx.CreateSkinImage(string.format("%s/%d.png", path, i), 0)
-    end
-    return image
-end
-
-local scoreNumberLarge = loadNumberImages("score_l")
-local scoreNumberSmall = loadNumberImages("score_s")
 
 function drawScoreLarge(x, y, alpha, num, digits, image, is_dim)
     local tw, th = gfx.ImageSize(image[1])
@@ -1254,9 +1361,26 @@ function drawScoreSmall(x, y, alpha, num, digits, image, is_dim)
     end
 end
 
+function loadNumberImages(path)
+    local image = {}
+    for i = 0, 9 do
+        image[i + 1] = gfx.CreateSkinImage(string.format("%s/%d.png", path, i), 0)
+    end
+    return image
+end
+
+local scoreBack = gfx.CreateSkinImage("gameplay/score/score_back.png", 0)
+local scoreFront = gfx.CreateSkinImage("gameplay/score/score_front.png", 0)
+local scoreArrowsAnim = gfx.LoadSkinAnimation("gameplay/score/score_arrows_frames", (1.0 / 44.0))
+local logoAnim = gfx.LoadSkinAnimation("gameplay/score/logo_frames", (1.0 / 60.0))
+
+local scoreNumberLarge = loadNumberImages("gameplay/score/score_l")
+local scoreNumberSmall = loadNumberImages("gameplay/score/score_s")
+
 local scoreEffective = 0
 local scoreSmall = 0
 local duration = 0.30
+local maxChain = 0
 
 function drawScore(deltaTime)
 	gfx.Save()
@@ -1276,8 +1400,13 @@ function drawScore(deltaTime)
 
 	-- SCORE ARROW ANIMATION
 	gfx.BeginPath()
-	gfx.ImageRect((desw - 228), -19, 250, 128, scoreBackAnim, 1, 0)
-	gfx.TickAnimation(scoreBackAnim, deltaTime)
+	gfx.ImageRect((desw - 228), -19, 250, 128, scoreArrowsAnim, 1, 0)
+	gfx.TickAnimation(scoreArrowsAnim, deltaTime)
+
+	-- SCORE FRONT
+	gfx.BeginPath()
+	gfx.FillColor(255, 255, 255)
+	gfx.ImageRect((desw - 228), -19, 250, 128, scoreFront, 1, 0)
 
 	-- SCORE COUNT ANIMATION
 	scoreLarge = math.floor(score / 10000)
@@ -1314,12 +1443,25 @@ function drawScore(deltaTime)
 	end
 
 	gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_TOP)
-	gfx.FillColor(255, 255, 255)
 	gfx.FontSize(22)
+	gfx.FillColor(245, 65, 125)
+	gfx.Text(string.format("%04d", maxChain), (desw - 167), 79.8)
+	gfx.FillColor(55, 255, 255)
+	gfx.Text(string.format("%04d", maxChain), (desw - 166.2), 79)
+	gfx.FillColor(255, 255, 255)
 	gfx.Text(string.format("%04d", maxChain), (desw - 167), 79)
 
 	gfx.Restore()
 end
+
+
+local gaugeEffBack = gfx.CreateSkinImage("gameplay/gauge/effective/gauge_back.png", 0)
+local gaugeEffFillNormalAnim = gfx.LoadSkinAnimation("gameplay/gauge/effective/fill_normal_frames", (1.0 / 48.0))
+local gaugeEffFillPassAnim = gfx.LoadSkinAnimation("gameplay/gauge/effective/fill_pass_frames", (1.0 / 48.0))
+local gaugeExcBack = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_back.png", 0)
+local gaugeExcFillNormal = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_fill.png", 0)
+local gaugeExcFillPass = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_fill.png", 0)
+local gaugePercentBack = gfx.CreateSkinImage("gameplay/gauge/gauge_percent_back.png", 0)
 
 function drawGauge(deltaTime)
 	gfx.Save()
@@ -1332,13 +1474,13 @@ function drawGauge(deltaTime)
     local height = 1024 * (scale * 0.35)
     local width = 512 * (scale * 0.35)
     local posy = (resy / 2) - (height / 2)
-    local posx = resx - (resx / 16) - width * (1 - math.max(introTimer - 1, 0))
+    local posx = resx - (resx / 16) - width
 
     if portrait then
         width = width * 0.7
         height = height * 0.7
         posy = posy - 30
-        posx = resx - width * (1 - math.max(introTimer - 1, 0))
+        posx = resx - width
     end
 
     local ratePercentage = math.floor(gameplay.gauge * 100)
@@ -1437,8 +1579,6 @@ function drawGauge(deltaTime)
 	gfx.FillColor(255, 255, 255)
 	gfx.ImageRect((posx - 46), (posy - 17.3), (gpW * 0.3), (gpH * 0.3), gaugePercentBack, 1, 0)
 
-	gfx.FillColor(255, 255, 255)
-
     local gaugePercent = "00%"
 
     if (gameplay.gauge < 0.1) then
@@ -1450,15 +1590,22 @@ function drawGauge(deltaTime)
 	gfx.LoadSkinFont("slant.ttf")
     gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_MIDDLE)
 	gfx.FontSize(16)
+	gfx.FillColor(245, 65, 125)
+	gfx.Text(gaugePercent, (posx - 1.8), (posy - 6.3))
+	gfx.FillColor(55, 255, 255)
+	gfx.Text(gaugePercent, (posx - 0.6), (posy - 6.3))
+	gfx.FillColor(255, 255, 255)
 	gfx.Text(gaugePercent, (posx - 1), (posy - 6.3))
 
 	gfx.Restore()
 end
 
-local comboDigits = loadNumberImages("chain")
-local comboDigits_uc = loadNumberImages("chain_uc")
-local chainText = gfx.CreateSkinImage("chain/chain.png", 0)
-local chainText_uc = gfx.CreateSkinImage("chain_uc/chain_uc.png", 0)
+
+local comboDigits = loadNumberImages("gameplay/chain/normal")
+local comboDigits_uc = loadNumberImages("gameplay/chain/uc")
+local chainText = gfx.CreateSkinImage("gameplay/chain/normal/chain.png", 0)
+local chainTextUC = gfx.CreateSkinImage("gameplay/chain/uc/chain_uc.png", 0)
+
 local comboTimer = 0
 local comboScale = 1
 local comboScaleTrigger = false
@@ -1498,100 +1645,102 @@ function drawCombo(deltaTime)
 
 	local cW, cH = (300 / 8), (488 / 8)
 
-	if (displayChain == true) then
-		if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText_uc, 0.4, 0)
+	if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainTextUC, 0.4, 0)
+	else
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText, 0.4, 0)
+	end
+
+	local posx = (desw - 1) / 2 + randBinary
+
+	if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
+		local digit = combo % 10
+
+		gfx.BeginPath()
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], 1, 0)
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], alpha, 0)
+
+		digit = math.floor(combo / 10) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 10 and 1 or 0.1, 0)
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and alpha or 0.1, 0)
+
+		digit = math.floor(combo / 100) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 100 and 1 or 0.1, 0)
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and alpha or 0.1, 0)
+
+		digit = math.floor(combo / 1000) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 1000 and 1 or 0.1, 0)
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and alpha or 0.1, 0)
+
+		cW, cH = (300 / 8) * comboScale, (488 / 8) * comboScale
+		combox = (300 / 8) * comboScale
+
+		if (combo >= comboBurstValue) then
+			comboBurstValue = comboBurstValue + 100
+			if (comboScaleTrigger == false) then
+				comboAlpha = 1
+			end
+			comboScaleTrigger = true
+		end
+	
+		if combo < 100 then
+			comboBurstValue = 100
+		end
+	
+		if ((comboScaleTrigger == true) and (comboScale < 3)) then
+			comboScale = comboScale + deltaTime * 6
+			comboAlpha = math.max(comboAlpha - deltaTime * 5, 0)
 		else
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (503 / 19), posy - (92 / 2.2), (503 / (19/2)), (92 / (19/2)), chainText, 0.4, 0)
+			comboScale = 1
+			comboAlpha = 0
+			comboScaleTrigger = false
 		end
 
-		local posx = (desw - 1) / 2 + randBinary
+		gfx.BeginPath()
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-		if (gameplay.comboState == 2) or (gameplay.comboState == 1) then
-			local digit = combo % 10
+		digit = math.floor(combo / 10) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-			gfx.BeginPath()
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], 1, 0)
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], alpha, 0)
+		digit = math.floor(combo / 100) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-			digit = math.floor(combo / 10) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 10 and 1 or 0.1, 0)
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and alpha or 0.1, 0)
+		digit = math.floor(combo / 1000) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
 
-			digit = math.floor(combo / 100) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 100 and 1 or 0.1, 0)
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and alpha or 0.1, 0)
+	else
+		local digit = combo % 10
 
-			digit = math.floor(combo / 1000) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], combo >= 1000 and 1 or 0.1, 0)
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and alpha or 0.1, 0)
+		gfx.BeginPath()
+		gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], 1, 0)
 
-			cW, cH = (300 / 8) * comboScale, (488 / 8) * comboScale
-			combox = (300 / 8) * comboScale
+		digit = math.floor(combo / 10) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and 1 or 0.1, 0)
 
-			if (combo >= comboBurstValue) then
-				comboBurstValue = comboBurstValue + 100
-				if (comboScaleTrigger == false) then
-					comboAlpha = 1
-				end
-				comboScaleTrigger = true
-			end
-	
-			if combo < 100 then
-				comboBurstValue = 100
-			end
-	
-			if ((comboScaleTrigger == true) and (comboScale < 3)) then
-				comboScale = comboScale + deltaTime * 6
-				comboAlpha = math.max(comboAlpha - deltaTime * 5, 0)
-			else
-				comboScale = 1
-				comboAlpha = 0
-				comboScaleTrigger = false
-			end
+		digit = math.floor(combo / 100) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and 1 or 0.1, 0)
 
-			gfx.BeginPath()
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-			digit = math.floor(combo / 10) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-			digit = math.floor(combo / 100) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-			digit = math.floor(combo / 1000) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits_uc[digit + 1], comboAlpha, 0)
-
-		else
-			local digit = combo % 10
-
-			gfx.BeginPath()
-			gfx.ImageRect(posx + combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], 1, 0)
-
-			digit = math.floor(combo / 10) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 10 and 1 or 0.1, 0)
-
-			digit = math.floor(combo / 100) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - combox, posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 100 and 1 or 0.1, 0)
-
-			digit = math.floor(combo / 1000) % 10
-			gfx.BeginPath()
-			gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and 1 or 0.1, 0)
-		end
+		digit = math.floor(combo / 1000) % 10
+		gfx.BeginPath()
+		gfx.ImageRect(posx - (combox * 2), posy - (cH / 2), cW, cH, comboDigits[digit + 1], combo >= 1000 and 1 or 0.1, 0)
 	end
 
 	gfx.Restore()
 end
+
+local earlatePos = game.GetSkinSetting("earlate_position")
+
+local earlateTimer = 0
 
 function drawEarlate(deltaTime)
 	gfx.Save()
@@ -1635,7 +1784,7 @@ function drawEarlate(deltaTime)
 		else
 			earlateHeight = 360
 		end
-	elseif (earlatePos == "Upper++") then
+	elseif (earlatePos == "Upper+") then
 		if portrait then
 			earlateHeight = 420
 		else
@@ -1686,9 +1835,9 @@ end
 
 local alertFrames = {{}, {}}
 
-alertFrames[1] = loadAlertFrames("laseralert_frames/left")
+alertFrames[1] = loadAlertFrames("gameplay/laseralert_frames/left")
 
-alertFrames[2] = loadAlertFrames("laseralert_frames/right")
+alertFrames[2] = loadAlertFrames("gameplay/laseralert_frames/right")
 
 local alertTimer = {0, 0}
 
@@ -1718,6 +1867,7 @@ function drawAlerts(deltaTime)
 		end
 
         gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
 		
 		if (alertTimer[1] < (1.0 / 45.0)) then
 			gfx.ImageRect(-58, -56, 116, 112, alertFrames[1][alertIndex[1]], 1, 0)
@@ -1728,7 +1878,7 @@ function drawAlerts(deltaTime)
 		end
 
 		if alertFlashLoop[1] == 5 then
-			alertIndex[1] = 24
+			alertIndex[1] = 25
 			alertFlashLoop[1] = 0
 		elseif (alertIndex[1] == 23) then
 			alertIndex[1] = 10
@@ -1762,6 +1912,7 @@ function drawAlerts(deltaTime)
 		end
 
         gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
 		
 		if (alertTimer[2] < (1.0 / 45.0)) then
 			gfx.ImageRect(-58, -56, 116, 112, alertFrames[2][alertIndex[2]], 1, 0)
@@ -1772,7 +1923,7 @@ function drawAlerts(deltaTime)
 		end
 
 		if alertFlashLoop[2] == 5 then
-			alertIndex[2] = 24
+			alertIndex[2] = 25
 			alertFlashLoop[2] = 0
 		elseif (alertIndex[2] == 23) then
 			alertIndex[2] = 10
@@ -1786,13 +1937,17 @@ function drawAlerts(deltaTime)
 	end
 end
 
+local passEffect = gfx.CreateSkinImage("gameplay/pass_effect.png", 0)
+
+local clearEffect = game.GetSkinSetting("clear_effect")
+
 local effectScale = 1
 local effectAlpha = 1
 local playEffect = true
 
 function drawPassEffect(deltaTime)
 	if (clearEffect == true) then
-		if (gameplay.gauge > 0.7) then
+		if (gameplay.gauge >= 0.7) then
 			if playEffect == true then
 
 				effectScale = effectScale + (deltaTime / 1.35) * 30
@@ -1840,15 +1995,24 @@ render_outro = function(deltaTime, clearState)
     gfx.Fill()
     gfx.Scale(scale, scale)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE)
-    gfx.FillColor(255, 255, 255, math.floor(255 * math.min(outroTimer, 1)))
     gfx.LoadSkinFont("slant.ttf")
     gfx.FontSize(70)
 	
 	local clearText = gfx.CreateLabel(clearTexts[clearState], 70, 0)
 
 	if portrait then
+		gfx.FillColor(245, 65, 125, math.floor(255 * math.min(outroTimer, 1)))
+		gfx.DrawLabel(clearText, (desw / 2), (desh / 2) - 99, resx)
+		gfx.FillColor(55, 255, 255, math.floor(255 * math.min(outroTimer, 1)))
+		gfx.DrawLabel(clearText, (desw / 2) + 1, (desh / 2) - 100, resx)
+		gfx.FillColor(255, 255, 255, math.floor(255 * math.min(outroTimer, 1)))
 		gfx.DrawLabel(clearText, (desw / 2), (desh / 2) - 100, resx)
 	else
+		gfx.FillColor(245, 65, 125, math.floor(255 * math.min(outroTimer, 1)))
+		gfx.DrawLabel(clearText, (desw / 2), (desh / 2) + 1, resx)
+		gfx.FillColor(55, 255, 255, math.floor(255 * math.min(outroTimer, 1)))
+		gfx.DrawLabel(clearText, (desw / 2) + 1, (desh / 2), resx)
+		gfx.FillColor(255, 255, 255, math.floor(255 * math.min(outroTimer, 1)))
 		gfx.DrawLabel(clearText, (desw / 2), (desh / 2), resx)
 	end
 
@@ -1931,7 +2095,7 @@ function draw_users(detaTime)
     local yshift = 0
 
     if portrait then
-        local bannerWidth, bannerHeight = gfx.ImageSize(topFill)
+        local bannerWidth, bannerHeight = gfx.ImageSize(topFillPortrait)
         yshift = desw * (bannerHeight / bannerWidth)
         gfx.Scale(0.7, 0.7)
     end

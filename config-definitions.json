@@ -11,7 +11,7 @@
 		"type": "selection",
 		"label": "Early/Late Position",
 		"default": "Bottom",
-		"values": ["Bottom", "Middle", "Upper", "Upper++", "Off"]
+		"values": ["Bottom", "Middle", "Upper", "Upper+", "Off"]
 	},
 
 	"skill_level":

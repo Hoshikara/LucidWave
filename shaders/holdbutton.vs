@@ -3,8 +3,6 @@
 layout(location=0) in vec2 inPos;
 layout(location=1) in vec2 inTex;
 
-varying vec4 position;
-
 out gl_PerVertex
 {
 	vec4 gl_Position;
@@ -18,9 +16,5 @@ uniform mat4 world;
 void main()
 {
 	fsTex = inTex;
-
-	position = vec4(inPos.xy, 0, 1);
-
 	gl_Position = proj * camera * world * vec4(inPos.xy, 0, 1);
-
 }

@@ -269,8 +269,12 @@ SongData.draw_difficulty = function(this, index, diff, jacket)
 	gfx.BeginPath()
 	gfx.LoadSkinFont("slant.ttf")
 	gfx.FontSize(36)
+	gfx.FillColor(245, 65, 125)
+	gfx.Text(levelText, 332.5 + index * 81.2, 269.8)
+	gfx.FillColor(55, 255, 255)
+	gfx.Text(levelText, 333.3 + index * 81.2, 268)
 	gfx.FillColor(255, 255, 255)
-	gfx.Text(levelText, 332.5 + index * 81, 268)
+	gfx.Text(levelText, 332.5 + index * 81.2, 268)
   end
 
 end
@@ -438,12 +442,20 @@ SongTable.draw_song = function(this, pos, songIndex)
 	  gfx.BeginPath()
 	  gfx.LoadSkinFont("slant.ttf")
 	  gfx.FontSize(24)
+	  gfx.FillColor(245, 65, 125)
+	  gfx.Text(levelText1, x + 41.5, y+17.8)
+	  gfx.FillColor(55, 255, 255)
+	  gfx.Text(levelText1, x + 42.3, y+16)
 	  gfx.FillColor(255, 255, 255)
 	  gfx.Text(levelText1, x + 41.5, y+16)
   else  
 	  gfx.BeginPath()
 	  gfx.LoadSkinFont("slant.ttf")
 	  gfx.FontSize(24)
+	  gfx.FillColor(245, 65, 125)
+	  gfx.Text(levelText1, x + 43.5, y+17.8)
+	  gfx.FillColor(55, 255, 255)
+	  gfx.Text(levelText1, x + 44.3, y+16)
 	  gfx.FillColor(255, 255, 255)
 	  gfx.Text(levelText1, x + 43.5, y+16)
   end
@@ -578,6 +590,20 @@ render = function(deltaTime)
 
   soffset = soffset * 0.8
   draw_search(120, 5, 600, 40)
+
+	if totalForce then
+		gfx.BeginPath()
+		gfx.LoadSkinFont("russellsquare.ttf")
+		gfx.FillColor(255,255,255)
+		gfx.FontSize(16)
+		gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_BOTTOM)
+		local forceText1 = string.format(string.sub(totalForce, 0, 2) .. ".")
+		gfx.Text(forceText1, desw-56, 303)
+		gfx.FontSize(13)
+		local forceText1 = string.format(string.sub(totalForce, -2))
+		gfx.Text(forceText1, desw-41, 302.5)
+	end
+gfx.LoadSkinFont("arial.ttf")
 end
 
 -- CALLBACK
