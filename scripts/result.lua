@@ -20,10 +20,23 @@ local difficulties = {novice, advanced, exhaust, maximum}
 local shotTimer = 0
 local shotPath = ""
 
+local played = false
+
+game.LoadSkinSample("result")
 game.LoadSkinSample("shutter")
 
 render = function(deltaTime, showStats)
+	if not played then
+		game.PlaySample("result")
+		played = true
+	end
 
+	if game.GetButton(game.BUTTON_STA) then
+		game.StopSample("result")
+	elseif game.GetButton(game.BUTTON_BCK) then
+		game.StopSample("result")
+    end
+   
 	-- LANDSCAPE FILL
 	gfx.BeginPath()
 	gfx.FillColor(0, 0, 0)

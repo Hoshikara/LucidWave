@@ -1997,7 +1997,7 @@ render_outro = function(deltaTime, clearState)
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE)
     gfx.LoadSkinFont("slant.ttf")
     gfx.FontSize(70)
-	
+
 	local clearText = gfx.CreateLabel(clearTexts[clearState], 70, 0)
 
 	if portrait then

@@ -6,7 +6,7 @@ Make sure your game is up-to-date before using by running 'updater.exe' inside y
 https://github.com/Drewol/unnamed-sdvx-clone
 
 Showcase Video:
-https://www.youtube.com/watch?v=HBf6RmCfH3o
+https://www.youtube.com/watch?v=01NKED09qgc
 
 --------------------------------------------------------------------------------
 
@@ -37,19 +37,21 @@ inside /textures/gameplay/user_panel, make sure to rename to 'appeal_card', .psd
 
 - If you want to use one background for every chart, place all desired background files inside /backgrounds/fallback and make sure 'fallback' is the only folder inside 'backgrounds'
 
-- Custom laser/track colors not supported, check this link for other available colors
+- Custom laser/track colors not supported, check this link for other available colors: TBA
 
 --------------------------------------------------------------------------------
 
 Changelog:
 
-January 11, 2020
+January 12, 2020
 
 - New laser alert animations
 
-- New song transitions for portrait and landscape
+- New song and gameplay exit transitions for portrait and landscape
 
 - New visualizer and banner animation
+
+- New sound effects
 
 - Moved optional laser/track colors to google drive to free up space
 

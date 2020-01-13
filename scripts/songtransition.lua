@@ -4,7 +4,7 @@ local animTimer = 0
 local jacket = 0
 
 local played = false
-game.LoadSkinSample("boot_song")
+game.LoadSkinSample("start_gameplay")
 
 local resx, resy
 local portrait
@@ -21,7 +21,7 @@ end
 
 function render(deltaTime)
     render_screen()
-    transitionTimer = transitionTimer + deltaTime
+    transitionTimer = transitionTimer + deltaTime * 1.4
     transitionTimer = math.min(transitionTimer, 1)
     if song.jacket == 0 and jacket == 0 then
         jacket = gfx.CreateSkinImage("song_select/jacket_loading.png", 0)
@@ -38,25 +38,103 @@ function render_out(deltaTime)
     return outTimer >= 2
 end
 
-local bgPortrait = gfx.CreateSkinImage("song_transition/bg_portrait.png", 0)
-local bgLandscape = gfx.CreateSkinImage("song_transition/bg_landscape.png", 0)
 local jacketBorder = gfx.CreateSkinImage("song_transition/jacket_border.png", 0)
+
+local difficulties = {
+    gfx.CreateSkinImage("song_transition/difficulties/novice.png", 0),
+    gfx.CreateSkinImage("song_transition/difficulties/advanced.png", 0),
+    gfx.CreateSkinImage("song_transition/difficulties/exhaust.png", 0),
+    gfx.CreateSkinImage("song_transition/difficulties/maximum.png", 0)
+}
+
+local stripesLightPortrait = gfx.CreateSkinImage("song_transition/stripes_light_p.png", 0)
+local stripesDarkPortrait = gfx.CreateSkinImage("song_transition/stripes_dark_p.png", 0)
+local topLeftDetailPortrait = gfx.CreateSkinImage("song_transition/top_left_detail_p.png", 0)
+local bottomRightDetailPortrait = gfx.CreateSkinImage("song_transition/bottom_right_detail_p.png", 0)
+local dividerPortrait = gfx.CreateSkinImage("song_transition/divider_p.png", 0)
+
+local stripesLightLandscape = gfx.CreateSkinImage("song_transition/stripes_light_l.png", 0)
+local stripesDarkLandscape = gfx.CreateSkinImage("song_transition/stripes_dark_l.png", 0)
+local topLeftDetailLandscape = gfx.CreateSkinImage("song_transition/top_left_detail_l.png", 0)
+local bottomRightDetailLandscape = gfx.CreateSkinImage("song_transition/bottom_right_detail_l.png", 0)
+local dividerLandscape = gfx.CreateSkinImage("song_transition/divider_l.png", 0)
 
 function render_screen()
 
 	ResetLayoutInformation()
 
+	local title = gfx.CreateLabel(song.title, math.floor(30 * scale), 0)
+	local artist = gfx.CreateLabel(song.artist, math.floor(24 * scale), 0)
+
+	local dW, dH = gfx.ImageSize(difficulties[1])
+
 	if portrait then
 		if not played then
-			game.PlaySample("boot_song")
+			game.PlaySample("start_gameplay")
 			played = true
 		end
 
-		animTimer = transitionTimer * 2 - outTimer
+		animTimer = transitionTimer * 2 - outTimer 
 
 		gfx.Save()
+
+		gfx.Save()
+		gfx.Translate(0, resy)
+		gfx.Rotate(math.rad(-138))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 1000) * scale)
+		gfx.Rotate(-math.rad(-138))
+		gfx.Translate(0, -resy)
 		gfx.BeginPath()
-		gfx.ImageRect(0, 0, resx, resy, bgPortrait, animTimer, 0)
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, stripesLightPortrait, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Translate(resx, 0)
+		gfx.Rotate(math.rad(42))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 1000) * scale)
+		gfx.Rotate(-math.rad(42))
+		gfx.Translate(-resx, 0)
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, stripesDarkPortrait, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Rotate(math.rad(-48))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 600) * scale)
+		gfx.Rotate(-math.rad(-48))
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, topLeftDetailPortrait, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Translate(resx, resy)
+		gfx.Rotate(math.rad(132))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 700) * scale)
+		gfx.Rotate(-math.rad(132))
+		gfx.Translate(-resx, -resy)
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, bottomRightDetailPortrait, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Translate(resx / 2, resy)
+		gfx.Rotate(math.rad(180))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, (0 + (animTimer * 2) * 400) * scale)
+		gfx.Rotate(-math.rad(180))
+		gfx.Translate(-(resx / 2), -resy)
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, dividerPortrait, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
 
 		gfx.Translate((resx / 2), (resy / 2))
 
@@ -71,18 +149,46 @@ function render_screen()
 		gfx.FillColor(255, 255, 255)
 
 		gfx.BeginPath()
+		gfx.ImageRect(194 * scale, (75 - animTimer * 100) * scale, (dW * 0.35) * scale, (dH * 0.35) * scale, difficulties[song.difficulty + 1], animTimer, 0)
+
+		gfx.BeginPath()
 		gfx.ImageRect(jBgX, jBgY, jBgW, jBgH, jacketBorder, animTimer, 0)
 
 		gfx.BeginPath()
 		gfx.ImageRect(jX, jY, jW, jH, jacket, animTimer, 0)
 
-		local title = gfx.CreateLabel(song.title, math.floor(30 * scale), 0)
-		local artist = gfx.CreateLabel(song.artist, math.floor(24 * scale), 0)
-	
-		gfx.LoadSkinFont("arial.ttf")
-
 		if (math.floor(animTimer) == 1) then
+			local tX = 0
+
+			if (song.level < 10) then
+				tX = 261 * scale
+			else
+				tX = 260 * scale
+			end
+
 			gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE)
+
+			gfx.LoadSkinFont("slant.ttf")
+
+			gfx.BeginPath()
+			gfx.FontSize(math.floor(40 * scale))
+			gfx.FillColor(245, 65, 125)
+			gfx.Text(string.format("%02d", song.level), tX, (21 * scale) + 1)
+			gfx.FillColor(55, 255, 255)
+			gfx.Text(string.format("%02d", song.level), tX + 1, (21 * scale))
+			gfx.FillColor(255, 255, 255)
+			gfx.Text(string.format("%02d", song.level), tX, (21 * scale))
+
+			gfx.BeginPath()
+			gfx.FontSize(math.floor(20 * scale))
+			gfx.FillColor(245, 65, 125)
+			gfx.Text(song.bpm, (260 * scale), (58 * scale) + 1)
+			gfx.FillColor(55, 255, 255)
+			gfx.Text(song.bpm, (260 * scale) + 1, (58 * scale))
+			gfx.FillColor(255, 255, 255)
+			gfx.Text(song.bpm, (260 * scale), (58 * scale))
+
+			gfx.LoadSkinFont("arial.ttf")
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
@@ -92,15 +198,15 @@ function render_screen()
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(artist, 0, (189 * scale), (385 * scale))
-			gfx.FillColor(255, 255, 255)
 			gfx.DrawLabel(artist, 0, (188 * scale), (385 * scale))
+			gfx.FillColor(255, 255, 255)
+			gfx.DrawLabel(artist, 0, (187 * scale), (385 * scale))
 		end
 
 		gfx.Restore()
 	else
 		if not played then
-			game.PlaySample("boot_song")
+			game.PlaySample("start_gameplay")
 			played = true
 		end
 
@@ -108,8 +214,63 @@ function render_screen()
 
 		gfx.Save()
 
+		gfx.Save()
+		gfx.Translate(0, resy)
+		gfx.Rotate(math.rad(-138))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 1000) * scale)
+		gfx.Rotate(-math.rad(-138))
+		gfx.Translate(0, -resy)
 		gfx.BeginPath()
-		gfx.ImageRect(0, 0, resx, resy, bgLandscape, animTimer, 0)
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, stripesLightLandscape, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Translate(resx, 0)
+		gfx.Rotate(math.rad(42))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 1000) * scale)
+		gfx.Rotate(-math.rad(42))
+		gfx.Translate(-resx, 0)
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, stripesDarkLandscape, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Rotate(math.rad(-48))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 400) * scale)
+		gfx.Rotate(-math.rad(-48))
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, topLeftDetailLandscape, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Translate(resx, resy)
+		gfx.Rotate(math.rad(132))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, ((animTimer * 2) * 500) * scale)
+		gfx.Rotate(-math.rad(132))
+		gfx.Translate(-resx, -resy)
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, bottomRightDetailLandscape, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
+
+		gfx.Save()
+		gfx.Translate(resx / 2, resy)
+		gfx.Rotate(math.rad(180))
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, (0 + (animTimer * 2) * 400) * scale)
+		gfx.Rotate(-math.rad(180))
+		gfx.Translate(-(resx / 2), -resy)
+		gfx.BeginPath()
+		gfx.FillColor(255, 255, 255)
+		gfx.ImageRect(0, 0, resx, resy, dividerLandscape, 1, 0)
+		gfx.ResetScissor()
+		gfx.Restore()
 
 		gfx.Translate((resx / 2), (resy / 2))
 
@@ -124,18 +285,46 @@ function render_screen()
 		gfx.FillColor(255, 255, 255)
 
 		gfx.BeginPath()
+		gfx.ImageRect(152 * scale, (123 - animTimer * 100) * scale, (dW * 0.35) * scale, (dH * 0.35) * scale, difficulties[song.difficulty + 1], animTimer, 0)
+
+		gfx.BeginPath()
 		gfx.ImageRect(jBgX, jBgY, jBgW, jBgH, jacketBorder, animTimer, 0)
 
 		gfx.BeginPath()
 		gfx.ImageRect(jX, jY, jW, jH, jacket, animTimer, 0)
 
-		local title = gfx.CreateLabel(song.title, math.floor(30 * scale), 0)
-		local artist = gfx.CreateLabel(song.artist, math.floor(24 * scale), 0)
-	
-		gfx.LoadSkinFont("arial.ttf")
-
 		if (math.floor(animTimer) == 1) then
+			local tX = 0
+
+			if (song.level < 10) then
+				tX = 219 * scale
+			else
+				tX = 218 * scale
+			end
+
 			gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE)
+
+			gfx.LoadSkinFont("slant.ttf")
+
+			gfx.BeginPath()
+			gfx.FontSize(math.floor(40 * scale))
+			gfx.FillColor(245, 65, 125)
+			gfx.Text(string.format("%02d", song.level), tX, (69 * scale) + 1)
+			gfx.FillColor(55, 255, 255)
+			gfx.Text(string.format("%02d", song.level), tX + 1, (69 * scale))
+			gfx.FillColor(255, 255, 255)
+			gfx.Text(string.format("%02d", song.level), tX, (69 * scale))
+
+			gfx.BeginPath()
+			gfx.FontSize(math.floor(20 * scale))
+			gfx.FillColor(245, 65, 125)
+			gfx.Text(song.bpm, (218 * scale), (106 * scale) + 1)
+			gfx.FillColor(55, 255, 255)
+			gfx.Text(song.bpm, (218 * scale) + 1, (106 * scale))
+			gfx.FillColor(255, 255, 255)
+			gfx.Text(song.bpm, (218 * scale), (106 * scale))
+
+			gfx.LoadSkinFont("arial.ttf")
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
