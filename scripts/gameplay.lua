@@ -1835,9 +1835,9 @@ end
 
 local alertFrames = {{}, {}}
 
-alertFrames[1] = loadAlertFrames("gameplay/laseralert_frames/left")
+alertFrames[1] = loadAlertFrames("gameplay/laser_alert_frames/left")
 
-alertFrames[2] = loadAlertFrames("gameplay/laseralert_frames/right")
+alertFrames[2] = loadAlertFrames("gameplay/laser_alert_frames/right")
 
 local alertTimer = {0, 0}
 

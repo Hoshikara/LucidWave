@@ -37,7 +37,8 @@ inside /textures/gameplay/user_panel, make sure to rename to 'appeal_card', .psd
 
 - If you want to use one background for every chart, place all desired background files inside /backgrounds/fallback and make sure 'fallback' is the only folder inside 'backgrounds'
 
-- Custom laser/track colors not supported, check this link for other available colors: TBA
+- Custom laser/track colors not supported, check this link for other available colors:
+https://drive.google.com/open?id=14cLldFq0XaaqEj-qoB_5L51PLU_WpOeL
 
 --------------------------------------------------------------------------------
 
