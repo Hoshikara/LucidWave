@@ -65,8 +65,6 @@ function render_screen()
 
 	local title = gfx.CreateLabel(song.title, math.floor(30 * scale), 0)
 	local artist = gfx.CreateLabel(song.artist, math.floor(24 * scale), 0)
-	local effector = gfx.CreateLabel(song.effector, math.floor(18 * scale), 0)
-	local illustrator = gfx.CreateLabel(song.illustrator, math.floor(18 * scale), 0)
 
 	local dW, dH = gfx.ImageSize(difficulties[1])
 
@@ -129,7 +127,7 @@ function render_screen()
 		gfx.Save()
 		gfx.Translate(resx / 2, resy)
 		gfx.Rotate(math.rad(180))
-		gfx.Scissor(-1000 * scale, 0, 2000 * scale, (0 + (animTimer * 2) * 450) * scale)
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, (0 + (animTimer * 2) * 400) * scale)
 		gfx.Rotate(-math.rad(180))
 		gfx.Translate(-(resx / 2), -resy)
 		gfx.BeginPath()
@@ -141,17 +139,17 @@ function render_screen()
 		gfx.Translate((resx / 2), (resy / 2))
 
 		local jBgX = -213 * scale
-		local jBgY = (-284 - animTimer * 100) * scale
+		local jBgY = (-264 - animTimer * 100) * scale
 		local jBgW, jBgH = 426 * scale, 426 * scale
 
 		local jX = -210 * scale
-		local jY = (-281 - animTimer * 100) * scale
+		local jY = (-261 - animTimer * 100) * scale
 		local jW, jH = 420 * scale, 420 * scale
 
 		gfx.FillColor(255, 255, 255)
 
 		gfx.BeginPath()
-		gfx.ImageRect(194 * scale, (40 - animTimer * 100) * scale, (dW * 0.35) * scale, (dH * 0.35) * scale, difficulties[song.difficulty + 1], animTimer, 0) --55
+		gfx.ImageRect(194 * scale, (75 - animTimer * 100) * scale, (dW * 0.35) * scale, (dH * 0.35) * scale, difficulties[song.difficulty + 1], animTimer, 0)
 
 		gfx.BeginPath()
 		gfx.ImageRect(jBgX, jBgY, jBgW, jBgH, jacketBorder, animTimer, 0)
@@ -175,46 +173,34 @@ function render_screen()
 			gfx.BeginPath()
 			gfx.FontSize(math.floor(40 * scale))
 			gfx.FillColor(245, 65, 125)
-			gfx.Text(string.format("%02d", song.level), tX, (-14 * scale) + 1)
+			gfx.Text(string.format("%02d", song.level), tX, (21 * scale) + 1)
 			gfx.FillColor(55, 255, 255)
-			gfx.Text(string.format("%02d", song.level), tX + 1, (-14 * scale))
+			gfx.Text(string.format("%02d", song.level), tX + 1, (21 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.Text(string.format("%02d", song.level), tX, (-14 * scale))
+			gfx.Text(string.format("%02d", song.level), tX, (21 * scale))
 
 			gfx.BeginPath()
 			gfx.FontSize(math.floor(20 * scale))
 			gfx.FillColor(245, 65, 125)
-			gfx.Text(song.bpm, (260 * scale), (24 * scale) + 1)
+			gfx.Text(song.bpm, (260 * scale), (58 * scale) + 1)
 			gfx.FillColor(55, 255, 255)
-			gfx.Text(song.bpm, (260 * scale) + 1, (24 * scale))
+			gfx.Text(song.bpm, (260 * scale) + 1, (58 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.Text(song.bpm, (260 * scale), (24 * scale))
+			gfx.Text(song.bpm, (260 * scale), (58 * scale))
 
 			gfx.LoadSkinFont("arial.ttf")
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(title, 0, (125 * scale), (385 * scale))
+			gfx.DrawLabel(title, 0, (145 * scale), (385 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(title, 0, (124 * scale), (385 * scale))
+			gfx.DrawLabel(title, 0, (144 * scale), (385 * scale))
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(artist, 0, (168 * scale), (385 * scale))
+			gfx.DrawLabel(artist, 0, (188 * scale), (385 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(artist, 0, (167 * scale), (385 * scale))
-
-			gfx.BeginPath()
-			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(effector, 0, (225 * scale), (420 * scale))
-			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(effector, 0, (224 * scale), (420 * scale))
-
-			gfx.BeginPath()
-			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(illustrator, 0, (277 * scale), (420 * scale))
-			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(illustrator, 0, (276 * scale), (420 * scale))
+			gfx.DrawLabel(artist, 0, (187 * scale), (385 * scale))
 		end
 
 		gfx.Restore()
@@ -277,7 +263,7 @@ function render_screen()
 		gfx.Save()
 		gfx.Translate(resx / 2, resy)
 		gfx.Rotate(math.rad(180))
-		gfx.Scissor(-1000 * scale, 0, 2000 * scale, (0 + (animTimer * 2) * 500) * scale)
+		gfx.Scissor(-1000 * scale, 0, 2000 * scale, (0 + (animTimer * 2) * 400) * scale)
 		gfx.Rotate(-math.rad(180))
 		gfx.Translate(-(resx / 2), -resy)
 		gfx.BeginPath()
@@ -289,17 +275,17 @@ function render_screen()
 		gfx.Translate((resx / 2), (resy / 2))
 
 		local jBgX = (-213 * 0.8) * scale
-		local jBgY = ((-183 * 0.8) - animTimer * 100) * scale
+		local jBgY = ((-163 * 0.8) - animTimer * 100) * scale
 		local jBgW, jBgH = (426 * 0.8) * scale, (426 * 0.8) * scale
 
 		local jX = (-210 * 0.8) * scale
-		local jY = ((-180 * 0.8) - animTimer * 100) * scale
+		local jY = ((-160 * 0.8) - animTimer * 100) * scale
 		local jW, jH = (420 * 0.8) * scale, (420 * 0.8) * scale
 
 		gfx.FillColor(255, 255, 255)
 
 		gfx.BeginPath()
-		gfx.ImageRect(152 * scale, (92 - animTimer * 100) * scale, (dW * 0.35) * scale, (dH * 0.35) * scale, difficulties[song.difficulty + 1], animTimer, 0)
+		gfx.ImageRect(152 * scale, (123 - animTimer * 100) * scale, (dW * 0.35) * scale, (dH * 0.35) * scale, difficulties[song.difficulty + 1], animTimer, 0)
 
 		gfx.BeginPath()
 		gfx.ImageRect(jBgX, jBgY, jBgW, jBgH, jacketBorder, animTimer, 0)
@@ -323,46 +309,34 @@ function render_screen()
 			gfx.BeginPath()
 			gfx.FontSize(math.floor(40 * scale))
 			gfx.FillColor(245, 65, 125)
-			gfx.Text(string.format("%02d", song.level), tX, (38 * scale) + 1)
+			gfx.Text(string.format("%02d", song.level), tX, (69 * scale) + 1)
 			gfx.FillColor(55, 255, 255)
-			gfx.Text(string.format("%02d", song.level), tX + 1, (38 * scale))
+			gfx.Text(string.format("%02d", song.level), tX + 1, (69 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.Text(string.format("%02d", song.level), tX, (38 * scale))
+			gfx.Text(string.format("%02d", song.level), tX, (69 * scale))
 
 			gfx.BeginPath()
 			gfx.FontSize(math.floor(20 * scale))
 			gfx.FillColor(245, 65, 125)
-			gfx.Text(song.bpm, (218 * scale), (75 * scale) + 1)
+			gfx.Text(song.bpm, (218 * scale), (106 * scale) + 1)
 			gfx.FillColor(55, 255, 255)
-			gfx.Text(song.bpm, (218 * scale) + 1, (75 * scale))
+			gfx.Text(song.bpm, (218 * scale) + 1, (106 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.Text(song.bpm, (218 * scale), (75 * scale))
+			gfx.Text(song.bpm, (218 * scale), (106 * scale))
 
 			gfx.LoadSkinFont("arial.ttf")
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(title, 0, (153 * scale), (420 * scale))
+			gfx.DrawLabel(title, 0, (173 * scale), (420 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(title, 0, (152 * scale), (420 * scale))
+			gfx.DrawLabel(title, 0, (172 * scale), (420 * scale))
 
 			gfx.BeginPath()
 			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(artist, 0, (197 * scale), (420 * scale))
+			gfx.DrawLabel(artist, 0, (217 * scale), (420 * scale))
 			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(artist, 0, (196 * scale), (420 * scale))
-
-			gfx.BeginPath()
-			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(effector, 0, (254 * scale), (420 * scale))
-			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(effector, 0, (253 * scale), (420 * scale))
-
-			gfx.BeginPath()
-			gfx.FillColor(55, 255, 255)
-			gfx.DrawLabel(illustrator, 0, (306 * scale), (420 * scale))
-			gfx.FillColor(255, 255, 255)
-			gfx.DrawLabel(illustrator, 0, (305 * scale), (420 * scale))
+			gfx.DrawLabel(artist, 0, (216 * scale), (420 * scale))
 		end
 
 		gfx.Restore()

@@ -112,7 +112,7 @@ render = function(deltaTime, showStats)
 	gfx.TextAlign(gfx.TEXT_ALIGN_CENTER)
 
 	local title = gfx.CreateLabel(result.title, 24, 0)
-	local artist = gfx.CreateLabel(result.artist, 19, 0)
+	local artist = gfx.CreateLabel(result.artist, 16, 0)
 
 	gfx.FillColor(245, 65, 125)
 	gfx.DrawLabel(title, (desw / 2)+0.3, (desh / 4) - 14.8, 460)
