@@ -44,6 +44,7 @@ function addsong(song)
     table.insert(songs, song)
 end
 local yOffset = 0
+local backgroundImage = gfx.CreateSkinImage("bg.png", 1);
 
 dlcache = io.open(cachepath, "r")
 if dlcache then
@@ -209,7 +210,7 @@ end
 
 function render(deltaTime)
     gfx.BeginPath()
-    gfx.Rect(0, 0, resX, resY)
+    gfx.ImageRect(0, 0, resX, resY, backgroundImage, 1, 0);
     gfx.LoadSkinFont("arial.ttf");
     displayCursorPosX = displayCursorPosX - (displayCursorPosX - cursorPosX) * deltaTime * 10
     displayCursorPosY = displayCursorPosY - (displayCursorPosY - cursorPosY) * deltaTime * 10
