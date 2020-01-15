@@ -19,7 +19,7 @@ function ResetLayoutInformation()
 end
 
 function render(deltaTime)
-    render_screen()
+    render_screen(transitionTimer)
     transitionTimer = transitionTimer + deltaTime
     transitionTimer = math.min(transitionTimer, 1)
     return transitionTimer >= 1
