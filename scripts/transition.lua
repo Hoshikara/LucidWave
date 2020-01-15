@@ -20,7 +20,7 @@ end
 
 function render(deltaTime)
     render_screen()
-    transitionTimer = transitionTimer + deltaTime * 1.4
+    transitionTimer = transitionTimer + deltaTime
     transitionTimer = math.min(transitionTimer, 1)
     return transitionTimer >= 1
 end

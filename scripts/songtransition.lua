@@ -21,7 +21,7 @@ end
 
 function render(deltaTime)
     render_screen()
-    transitionTimer = transitionTimer + deltaTime * 1.4
+    transitionTimer = transitionTimer + deltaTime
     transitionTimer = math.min(transitionTimer, 1)
     if song.jacket == 0 and jacket == 0 then
         jacket = gfx.CreateSkinImage("song_select/jacket_loading.png", 0)
