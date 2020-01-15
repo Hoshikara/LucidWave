@@ -9,6 +9,7 @@ local portrait = resy > resx
 local landscape = resx > resy
 
 local backgroundImage = gfx.CreateSkinImage("song_select/results_bg.jpg", 0)
+local bgFill = gfx.CreateSkinImage("bg_fill.png", 0)
 
 local novice = gfx.CreateSkinImage("song_select/level/novice.png", 0)
 local advanced = gfx.CreateSkinImage("song_select/level/advanced.png", 0)
@@ -26,8 +27,8 @@ game.LoadSkinSample("result")
 game.LoadSkinSample("shutter")
 
 render = function(deltaTime, showStats)
-	if not played then
-		game.PlaySample("result")
+    if (result.badge > 1) and not played then
+		game.PlaySample("result", true)
 		played = true
 	end
 
@@ -39,9 +40,8 @@ render = function(deltaTime, showStats)
    
 	-- LANDSCAPE FILL
 	gfx.BeginPath()
-	gfx.FillColor(0, 0, 0)
-	gfx.Rect(0, 0, resx, resy)
-	gfx.Fill()
+	gfx.FillColor(255, 255, 255)
+	gfx.ImageRect(0, 0, resx, resy, bgFill, 1, 0)
 	 
 	gfx.Scale(scale, scale)
 

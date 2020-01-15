@@ -1,4 +1,5 @@
 local backgroundImage = gfx.CreateSkinImage("song_select/bg.jpg", 0)
+local bgFill = gfx.CreateSkinImage("bg_fill.png", 0)
 
 render = function(deltaTime)
     gfx.ResetTransform()
@@ -9,9 +10,8 @@ render = function(deltaTime)
     local scale = resy / desh
 
 	gfx.BeginPath()
-	gfx.FillColor(0, 0, 0)
-	gfx.Rect(0, 0, resx, resy)
-	gfx.Fill()
+	gfx.FillColor(255, 255, 255)
+	gfx.ImageRect(0, 0, resx, resy, bgFill, 1, 0)
 
     local xshift = (resx - desw * scale) / 2
     local yshift = (resy - desh * scale) / 2
