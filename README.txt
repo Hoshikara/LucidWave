@@ -22,7 +22,7 @@ USC Vivid Wave Skin by Some One
 
 Unnamed SDVX Clone SOUND VOLTEX VIVID WAVE Skin by kanemiko#2984
 
-Customized by Hoshikara#5973
+Customized by Hoshikara#5973 (easiest way to reach me for issues/bugs/suggestions)
 
 --------------------------------------------------------------------------------
 
