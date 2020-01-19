@@ -272,7 +272,17 @@ end
 		function loadHoldAnimFrames(path)
 			local frames = {}
 
-			for i = 0, 80 do
+			for i = 0, 81 do
+				frames[i]  = gfx.CreateSkinImage(string.format("%s/%03d.png", path, i), 0)
+			end
+
+			return frames
+		end
+
+		function loadHoldInnerAnimFrames(path)
+			local frames = {}
+
+			for i = 0, 13 do
 				frames[i]  = gfx.CreateSkinImage(string.format("%s/%03d.png", path, i), 0)
 			end
 
@@ -299,7 +309,7 @@ end
 			return frames
 		end
 
-		local holdInnerAnimFrames = loadHoldAnimFrames("gameplay/hit_animation_frames/hold_inner")
+		local holdInnerAnimFrames = loadHoldInnerAnimFrames("gameplay/hit_animation_frames/hold_inner")
 
 		local holdDomeAnimFrames = loadHoldAnimFrames("gameplay/hit_animation_frames/hold_dome")
 
@@ -309,9 +319,13 @@ end
 
 		local holdAnimTimer = {0, 0, 0, 0, 0, 0}
 
+		local holdInnerAnimTimer = {0, 0, 0, 0, 0, 0}
+
 		local holdCriticalAnimTimer = {0, 0, 0, 0, 0, 0}
 
 		local holdAnimIndex = {1, 1, 1, 1, 1, 1}
+
+		local holdInnerAnimIndex = {1, 1, 1, 1, 1, 1}
 
 		local holdCriticalAnimIndex = {1, 1, 1, 1, 1, 1}
 
@@ -339,16 +353,22 @@ end
 
 			holdAnimTimer[i] = holdAnimTimer[i] + deltaTime
 
+			holdInnerAnimTimer[i] = holdInnerAnimTimer[i] + deltaTime
+
 			delayCriticalStart[i] = delayCriticalStart[i] + deltaTime
 
 			if (delayCriticalStart[i] > (1.0 / 6.0)) then
 				holdCriticalAnimTimer[i] = holdCriticalAnimTimer[i] + deltaTime
 			end
 
-
 			if (holdAnimTimer[i] > (1.0 / 30.0)) then
 				holdAnimTimer[i] = 0
 				holdAnimIndex[i] = holdAnimIndex[i] + 1
+			end
+
+			if (holdInnerAnimTimer[i] > (1.0 / 30.0)) then
+				holdInnerAnimTimer[i] = 0
+				holdInnerAnimIndex[i] = holdInnerAnimIndex[i] + 1
 			end
 
 			if (holdCriticalAnimTimer[i] > (1.0 / 59.0)) then
@@ -356,9 +376,13 @@ end
 				holdCriticalAnimIndex[i] = holdCriticalAnimIndex[i] + 1
 			end
 
+			if (holdInnerAnimTimer[i] < (1.0 / 30.0)) then
+				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
+				gfx.ImageRect(-213, -219, 426, 426, holdInnerAnimFrames[holdInnerAnimIndex[i]], 4, 0)
+			end
+
 			if (holdAnimTimer[i] < (1.0 / 30.0)) then
 				gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-				gfx.ImageRect(-213, -219, 426, 426, holdInnerAnimFrames[holdAnimIndex[i]], 5, 0)
 				gfx.ImageRect(-213, -219, 426, 426, holdDomeAnimFrames[holdAnimIndex[i]], 1.5, 0)
 			end
 
@@ -367,12 +391,16 @@ end
 				gfx.ImageRect(-213, -219, 426, 426, holdCriticalAnimFrames[holdCriticalAnimIndex[i]], 1.5, 0)
 			end
 
-			if (holdAnimIndex[i] == 80) then
-				holdAnimIndex[i] = 10
+			if (holdInnerAnimIndex[i] == 13) then
+				holdInnerAnimIndex[i] = 9
+			end
+
+			if (holdAnimIndex[i] == 81) then
+				holdAnimIndex[i] = 9
 			end
 
 			if (holdCriticalAnimIndex[i] == 152) then
-				holdCriticalAnimIndex[i] = 10
+				holdCriticalAnimIndex[i] = 8
 			end
 
 			gfx.Restore()
@@ -816,6 +844,7 @@ function render_crit_overlay(deltaTime)
 					startEndAnim[i] = true
 				else
 					holdAnimIndex[i] = 1
+					holdInnerAnimIndex[i] = 1
 					holdCriticalAnimIndex[i] = 1
 					delayCriticalStart[i] = 0
 				end
@@ -1013,7 +1042,7 @@ function DrawBanner(deltaTime)
 	gfx.FillColor(255, 255, 255)
 	gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
 	gfx.Scissor(0, (470 - (scanGlowTimer * 3) * 120), desw, (actualHeight / 6))
-	gfx.ImageRect(0, 0, desw, actualHeight, scanGlow, 1, 0)
+	gfx.ImageRect(0, 0, desw, actualHeight, scanGlow, 1.15, 0)
 	gfx.ResetScissor()
 	gfx.Restore()
 	
@@ -1045,7 +1074,7 @@ function DrawBanner(deltaTime)
 	gfx.Save()
 	gfx.BeginPath()
 	gfx.GlobalCompositeOperation(gfx.BLEND_OP_LIGHTER)
-	gfx.ImageRect(159, 92, (vW * 0.5), (vH * 0.5), visualizer, 1, 0)
+	gfx.ImageRect(159, 92, (vW * 0.5), (vH * 0.5), visualizer, 1.2, 0)
 	gfx.TickAnimation(visualizer, deltaTime)
 	gfx.Restore()
 
@@ -1151,19 +1180,19 @@ function drawTrackInfo(deltaTime)
 
 	-- BPM AND HI-SPEED
 	gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT)
-	gfx.FontSize(24)
+	gfx.FontSize(20)
 	gfx.FillColor(245, 65, 125)
-	gfx.Text(string.format("%.0f", gameplay.bpm), 245, 79.8)
+	gfx.Text(string.format("%.0f", gameplay.bpm), 243, 77.8)
 	gfx.FillColor(55, 255, 255)
-	gfx.Text(string.format("%.0f", gameplay.bpm), 245.8, 79)
+	gfx.Text(string.format("%.0f", gameplay.bpm), 243.8, 77)
 	gfx.FillColor(255, 255, 255)
-	gfx.Text(string.format("%.0f", gameplay.bpm), 245, 79)
+	gfx.Text(string.format("%.0f", gameplay.bpm), 243, 77)
 	gfx.FillColor(245, 65, 125)
-	gfx.Text(string.format("%.1f", gameplay.hispeed), 245, 107.8)
+	gfx.Text(string.format("%.1f", gameplay.hispeed), 243, 105.8)
 	gfx.FillColor(55, 255, 255)
-	gfx.Text(string.format("%.1f", gameplay.hispeed), 245.8, 107)
+	gfx.Text(string.format("%.1f", gameplay.hispeed), 243.8, 105)
 	gfx.FillColor(255, 255, 255)
-	gfx.Text(string.format("%.1f", gameplay.hispeed), 245, 107)
+	gfx.Text(string.format("%.1f", gameplay.hispeed), 243, 105)
 
 	-- TRACK TITLE
 	gfx.LoadSkinFont("arial.ttf")
@@ -1445,11 +1474,11 @@ function drawScore(deltaTime)
 	gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_TOP)
 	gfx.FontSize(22)
 	gfx.FillColor(245, 65, 125)
-	gfx.Text(string.format("%04d", maxChain), (desw - 167), 79.8)
+	gfx.Text(string.format("%04d", maxChain), (desw - 168), 79.8)
 	gfx.FillColor(55, 255, 255)
-	gfx.Text(string.format("%04d", maxChain), (desw - 166.2), 79)
+	gfx.Text(string.format("%04d", maxChain), (desw - 167.2), 79)
 	gfx.FillColor(255, 255, 255)
-	gfx.Text(string.format("%04d", maxChain), (desw - 167), 79)
+	gfx.Text(string.format("%04d", maxChain), (desw - 168), 79)
 
 	gfx.Restore()
 end
@@ -1591,7 +1620,7 @@ function drawGauge(deltaTime)
     gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_MIDDLE)
 	gfx.FontSize(16)
 	gfx.FillColor(245, 65, 125)
-	gfx.Text(gaugePercent, (posx - 1.8), (posy - 6.3))
+	gfx.Text(gaugePercent, (posx - 1.6), (posy - 6.3))
 	gfx.FillColor(55, 255, 255)
 	gfx.Text(gaugePercent, (posx - 0.6), (posy - 6.3))
 	gfx.FillColor(255, 255, 255)
@@ -1826,7 +1855,7 @@ end
 function loadAlertFrames(path)
 	local frames = {}
 
-	for i = 0, 28 do
+	for i = 0, 29 do
 		frames[i]  = gfx.CreateSkinImage(string.format("%s/%03d.png", path, i), 0)
 	end
 
@@ -1873,12 +1902,12 @@ function drawAlerts(deltaTime)
 			gfx.ImageRect(-58, -56, 116, 112, alertFrames[1][alertIndex[1]], 1, 0)
 		end
 
-		if alertIndex[1] == 28 then
+		if alertIndex[1] == 29 then
 			startAlert[1] = false
 		end
 
 		if alertFlashLoop[1] == 5 then
-			alertIndex[1] = 25
+			alertIndex[1] = 24
 			alertFlashLoop[1] = 0
 		elseif (alertIndex[1] == 23) then
 			alertIndex[1] = 10
@@ -1918,12 +1947,12 @@ function drawAlerts(deltaTime)
 			gfx.ImageRect(-58, -56, 116, 112, alertFrames[2][alertIndex[2]], 1, 0)
 		end
 
-		if alertIndex[2] == 28 then
+		if alertIndex[2] == 29 then
 			startAlert[2] = false
 		end
 
 		if alertFlashLoop[2] == 5 then
-			alertIndex[2] = 25
+			alertIndex[2] = 24
 			alertFlashLoop[2] = 0
 		elseif (alertIndex[2] == 23) then
 			alertIndex[2] = 10
