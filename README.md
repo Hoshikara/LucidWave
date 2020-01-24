@@ -1,3 +1,5 @@
+I will no longer be actively working on this skin as of January 23, 2020, due to outside commitments. However, I plan to keep up with USC updates so it remains compatible. When I first started working on skinning for USC, I wanted to create a skin that I would feel good playing with. At the current state of the master branch, I feel like I accomplished that more or less. There are many things I want to change or improve but now is not the time--hopefully I can continue in the future. Until then, I hope you all enjoy using this skin.
+
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
 
 No official SOUND VOLTEX VIVID WAVE assets/data were used in the creation of this skin.
@@ -22,7 +24,7 @@ USC Vivid Wave Skin by Some One
 
 Unnamed SDVX Clone SOUND VOLTEX VIVID WAVE Skin by kanemiko#2984
 
-Customized by Hoshikara#5973 (easiest way to reach me for issues/bugs/suggestions)
+Customized by Hoshikara#5973 (easiest way to reach me for bugs or issues)
 
 --------------------------------------------------------------------------------
 

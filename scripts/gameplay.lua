@@ -1274,7 +1274,7 @@ function drawTrackInfo(deltaTime)
 			gfx.ImageRect(66, 325, 69, 20, dan[skillLevel], 1, 0)
 		end
 
-		local displayUser = gfx.CreateLabel(userName, 24, 0)
+		local displayUser = gfx.CreateLabel(string.upper(userName), 24, 0)
 
 		-- USERNAME
 		gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
