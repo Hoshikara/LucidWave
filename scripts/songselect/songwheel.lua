@@ -316,11 +316,11 @@ SongData.render = function(this, deltaTime)
       s = 1 / 3,
     });
   else
-    this.images.songPanelLS:draw({ 
-      x = (desw / 2), 
-      y = (desh / 2),
+    this.images.songPanelLS:draw({
+      x = 254,
+      y = 359.5,
       s = 1 / 3,
-    });
+    })
   end
 
   local jacket = this.jacketCache:get(diff.jacketPath);
@@ -822,7 +822,7 @@ drawForce = function(totalForce, deltaTime)
     gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_BOTTOM);
   else
     x = 449
-    y = 491.5;
+    y = 490;
     gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
   end
 
@@ -832,14 +832,26 @@ drawForce = function(totalForce, deltaTime)
   gfx.FillColor(255, 255, 255, 255);
 
   forceText = string.format(string.sub(totalForce, 0, 2) .. ".");
-  gfx.FontSize((portrait and 16) or 20);
+  gfx.FontSize((portrait and 16) or 18);
   gfx.Text(forceText, x, y);
 
   forceText = string.format(string.sub(totalForce, -2));
-  gfx.FontSize((portrait and 13) or 16);
-  gfx.Text(forceText, (portrait and (x + 15)) or x + 18, (y - 0.5));
+  gfx.FontSize((portrait and 13) or 14);
+  gfx.Text(forceText, (portrait and (x + 15)) or x + 15, (y - 0.5));
   
   gfx.LoadSkinFont('arial.ttf');
+end
+
+local legend = gfx.CreateSkinImage('song_select/legend.png', 0);
+
+drawLegend = function(deltaTime)
+  local w, h = gfx.ImageSize(legend);
+
+  w = w * 1 / 3;
+  h = h * 1 / 3;
+
+  gfx.BeginPath();
+  gfx.ImageRect((desw - w), (desh - h), w, h, legend, 1, 0);
 end
 
 render = function(deltaTime)
@@ -853,9 +865,11 @@ render = function(deltaTime)
     glowState = true;
   end
 
+
   songData:render(deltaTime);
   songTable:render(deltaTime);
 
+  drawLegend(deltaTime);
   drawSearch(deltaTime);
 
   if (totalForce) then
