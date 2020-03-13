@@ -11,10 +11,10 @@ local landscape = resx > resy
 local backgroundImage = gfx.CreateSkinImage("song_select/results_bg.jpg", 0)
 local bgFill = gfx.CreateSkinImage("bg_fill.png", 0)
 
-local novice = gfx.CreateSkinImage("song_select/level/novice.png", 0)
-local advanced = gfx.CreateSkinImage("song_select/level/advanced.png", 0)
-local exhaust = gfx.CreateSkinImage("song_select/level/exhaust.png", 0)
-local maximum = gfx.CreateSkinImage("song_select/level/maximum.png", 0)
+local novice = gfx.CreateSkinImage("song_select/difficulties/novice.png", 0)
+local advanced = gfx.CreateSkinImage("song_select/difficulties/advanced.png", 0)
+local exhaust = gfx.CreateSkinImage("song_select/difficulties/exhaust.png", 0)
+local maximum = gfx.CreateSkinImage("song_select/difficulties/maximum.png", 0)
 
 local difficulties = {novice, advanced, exhaust, maximum}
 

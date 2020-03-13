@@ -162,10 +162,7 @@ function SetUpCritTransform()
 end
 
 function GetCritLineCenteringOffset()
-    local distFromCenter = resx / 2 - gameplay.critLine.x
-    local dvx = math.cos(gameplay.critLine.rotation)
-    local dvy = math.sin(gameplay.critLine.rotation)
-    return math.sqrt(dvx * dvx + dvy * dvy) * distFromCenter
+	return gameplay.critLine.xOffset * 10;
 end
 
 
@@ -1781,13 +1778,10 @@ function drawEarlate(deltaTime)
 	end
 
     local alpha = math.floor(earlateTimer * 40) % 4
-
-    alpha = alpha * 100 + 25
-
-    alpha = alpha * 160 + 25
-
+    alpha = alpha * 200 + 55
+	
     gfx.BeginPath()
-    gfx.FontSize(20)
+    gfx.FontSize(24)
     gfx.LoadSkinFont("slant.ttf")
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_MIDDLE)
 
@@ -1803,7 +1797,7 @@ function drawEarlate(deltaTime)
 		end
 	elseif (earlatePos == "Middle") then
 		if portrait then
-			earlateHeight = 170
+			earlateHeight = 190
 		else
 			earlateHeight = 220
 		end
@@ -1824,19 +1818,19 @@ function drawEarlate(deltaTime)
 	end
 
 	if portrait then 
-		ypos = desh * critLinePos[2] - 200
+		ypos = desh * critLinePos[2] - 220
 	end
 
-    if late then
-		gfx.FillColor(255, 255, 255, alpha)
-        gfx.Text("> LATE <", (desw / 2) - 1, (ypos - earlateHeight))
+	if late then
+        gfx.FillColor(55, 55, 55, 155)
+		gfx.Text("> LATE <", (desw / 2), (ypos - earlateHeight + 1))
         gfx.FillColor(55, 255, 255, alpha)
-        gfx.Text("> LATE <", (desw / 2) - 1, (ypos - earlateHeight))
-    else
-		gfx.FillColor(255, 255, 255, alpha)
-        gfx.Text("> EARLY <", (desw / 2) + 1, (ypos - earlateHeight))
-        gfx.FillColor(255, 55, 255, alpha)
-        gfx.Text("> EARLY <", (desw / 2) + 1, (ypos - earlateHeight))
+		gfx.Text("> LATE <", (desw / 2), (ypos - earlateHeight))
+	else
+        gfx.FillColor(55, 55, 55, 155)
+		gfx.Text("> EARLY <", (desw / 2), (ypos - earlateHeight + 1))
+        gfx.FillColor(255, 85, 255, alpha)
+		gfx.Text("> EARLY <", (desw / 2), (ypos - earlateHeight))
     end
 
 	gfx.Restore()
