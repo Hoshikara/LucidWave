@@ -25,7 +25,11 @@ Memo.memoize = function(this, key, generator)
 end
 
 -- Image Class
-Image = {};
+Image = {
+  ANCHOR_CENTER = 1,
+  ANCHOR_RIGHT = 2,
+  ANCHOR_BOTTOM = 3
+};
 
 Image.new = function(path)
   local image = gfx.CreateSkinImage(path, 0);
@@ -54,12 +58,23 @@ Image.draw = function(this, params)
   local s = params.s or 1;
   local alpha = params.alpha or 1;
   local angle = params.angle or 0;
+  local anchorX = params.anchorX or Image.ANCHOR_CENTER;
+  local anchorY = params.anchorY or Image.ANCHOR_CENTER;
 
   w = w * s;
   h = h * s;
 
-  x = x - (w / 2);
-  y = y - (h / 2);
+  if (anchorX == Image.ANCHOR_RIGHT) then
+    x = x - w;
+  else
+    x = x - (w / 2);
+  end
+
+  if (anchorY == Image.ANCHOR_BOTTOM) then
+    y = y - h;
+  end
+    y = y - (h / 2);
+  end
 
   gfx.BeginPath();
   gfx.ImageRect(x, y, w, h, this.image, alpha, angle);

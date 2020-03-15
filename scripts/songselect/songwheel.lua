@@ -284,7 +284,8 @@ SongData.drawDifficulty = function(this, index, diff, jacket)
       level,
       x,
       (portrait and 265.5) or 568.5,
-      0.8);
+      0.8
+    );
   end
 end
 
@@ -405,7 +406,11 @@ SongData.render = function(this, deltaTime)
     );
   end
 
-  this:drawBPM(song.bpm, 95, 482);
+  this:drawBPM(
+    song.bpm,
+    (portrait and 276) or 95,
+    (portrait and 182) or 482
+  );
 
   local highScore = diff.scores[1];
 
@@ -869,7 +874,10 @@ render = function(deltaTime)
   songData:render(deltaTime);
   songTable:render(deltaTime);
 
-  drawLegend(deltaTime);
+  if (not portrait) then
+    drawLegend(deltaTime);
+  end
+
   drawSearch(deltaTime);
 
   if (totalForce) then
