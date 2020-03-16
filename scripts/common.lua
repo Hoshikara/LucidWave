@@ -72,7 +72,7 @@ Image.draw = function(this, params)
 
   if (anchorY == Image.ANCHOR_BOTTOM) then
     y = y - h;
-  end
+  else
     y = y - (h / 2);
   end
 
