@@ -1,9 +1,12 @@
+-- TODO: implement high score toggle for landscape
+
 local jacket = nil;
 local shotTimer = 0;
 local shotPath = '';
 local played = false;
 local grade = nil;
 local lastGrade = -1;
+local toggleStats = true
 
 game.LoadSkinSample('result');
 game.LoadSkinSample('shutter');
@@ -16,7 +19,7 @@ local scale;
 local xShift;
 local yShift;
 
-ResetLayoutInformation = function()
+resetLayoutInformation = function()
   resx, resy = game.GetResolution();
   portrait = resy > resx;
   desw = (portrait and 720) or 1280;
@@ -43,10 +46,9 @@ drawShiftedText = function(text, color1, color2, size, x, y, offset)
   gfx.Text(text, x, y);
 end
 
--- Results Class
 Results = {};
 
-Results.new = function(showStats)
+Results.new = function()
   local this = {
     images = {
       backgroundPT = Image.new('result/bg_pt.jpg'),
@@ -103,30 +105,30 @@ Results.drawDifficulty = function(this, index, level, x, y)
   this.images.difficulties[index]:draw({
     x = x,
     y = y,
-    s = 0.25
+    s = (portrait and 0.25) or 0.35
   });
 
   local x2;
 
   if (level >= 10) then
-    x2 = (portrait and 421) or 421
+    x2 = (portrait and 421) or 878
   else
-    x2 = (portrait and 424) or 424
+    x2 = (portrait and 424) or 881
   end
 
   gfx.BeginPath();
   gfx.LoadSkinFont('slant.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE);
-  gfx.FontSize(38);
+  gfx.FontSize((portrait and 38) or 48);
   drawAberratedText(
     string.format('%02d', level),
     x2,
-    y - 5,
-    0.5
+    (portrait and (y - 5)) or (y - 6),
+    (portrait and 0.5) or 0.8
   );
 end
 
-Results.drawScore = function(this, score, x1, y1, x2, y2)
+Results.drawScore = function(this, score, highScore, positive, x1, y1, x2, y2)
   local scoreLarge = string.sub(score, 1, 4);
   local scoreSmall = string.sub(score, -4);
 
@@ -138,7 +140,7 @@ Results.drawScore = function(this, score, x1, y1, x2, y2)
     scoreLarge,
     { 245, 65, 125, 255 },
     { 25, 25, 25, 255 },
-    72,
+    (portrait and 72) or 94,
     x1,
     y1,
     1
@@ -148,11 +150,33 @@ Results.drawScore = function(this, score, x1, y1, x2, y2)
     scoreSmall,
     { 245, 65, 125, 255 },
     { 25, 25, 25, 255 },
-    58,
+    (portrait and 58) or 75,
     x2,
     y2,
     1
   );
+
+  if (not portrait) then
+    gfx.BeginPath();
+    gfx.FillColor(255, 255, 255, 255);
+    gfx.StrokeColor(245, 65, 125, 255);
+    gfx.RoundedRect(1154, 248, 200, 26, 12);
+    gfx.Fill();
+    gfx.Stroke();
+
+    if (highScore) then
+      gfx.BeginPath();
+      gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
+      gfx.FontSize(24);
+      
+      if (positive == true) then
+        gfx.FillColor(55, 105, 255, 255);
+      else
+        gfx.FillColor(255, 25, 25, 255);
+      end
+      gfx.Text(highScore, 1274, 270);
+    end
+  end
 end
 
 Results.drawGraph = function(this, x, y, w, h)
@@ -186,10 +210,10 @@ Results.drawGraph = function(this, x, y, w, h)
     gfx.ResetScissor();
   end
 
-  this.images.grade:draw({
-    x = x + 19,
-    y = y + 17,
-    s = (portrait and 0.1) or 0.1
+  grade:draw({
+    x = (portrait and (x + 19)) or (x + 23),
+    y = (portrait and (y + 17)) or (y + 21),
+    s = (portrait and 0.1) or 0.13
   });
 end
 
@@ -197,7 +221,7 @@ Results.drawMetrics = function(this, metrics)
   gfx.BeginPath();
   gfx.LoadSkinFont('avantgarde.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_CENTER);
-  gfx.FontSize(18);
+  gfx.FontSize((portrait and 18) or 21);
 
   for i = 1, #metrics do
     local metric = metrics[i].metric;
@@ -214,7 +238,7 @@ Results.drawMetrics = function(this, metrics)
   end
 end
 
-Results.render = function(this, deltaTime, showStats);
+Results.render = function(this, showStats);
   if (result.badge > 1) and (not played) then
     game.PlaySample('result', true);
     played = true;
@@ -231,12 +255,12 @@ Results.render = function(this, deltaTime, showStats);
       w = desw,
       h = desh
     });
-
-    this.images.infoPanelPT:draw({
-      x = 720,
-      y = 654,
-      s = 1 / 3,
-      anchorX = 2
+  else
+    this.images.backgroundLS:draw({
+      x = desw / 2,
+      y = desh / 2,
+      w = desw,
+      h = desh
     });
   end
 
@@ -247,200 +271,233 @@ Results.render = function(this, deltaTime, showStats);
   if (jacket) then
     this:drawJacket(
       jacket,
-      (portrait and 360) or 360,
-      (portrait and 160) or 360,
-      (portrait and 265) or 265,
-      (portrait and 265) or 265
+      (portrait and 360) or 400,
+      (portrait and 160) or 280,
+      (portrait and 265) or 460,
+      (portrait and 265) or 460
     );
   end
 
   this.images.divider:draw({
-    x = (portrait and 359.5) or 359.5,
-    y = (portrait and 326) or 326,
-    s = (portrait and (1 / 3)) or (1 / 3)
+    x = (portrait and 359.5) or 400,
+    y = (portrait and 326) or 600,
+    s = (portrait and (1 / 3)) or 0.42
   });
 
   gfx.LoadSkinFont('arial.ttf');
   
-  local title = gfx.CreateLabel(result.title, 24, 0);
+  local title = gfx.CreateLabel(result.title, (portrait and 24) or 34, 0);
 
   this:drawTitleArtist(
     title,
-    (portrait and 360) or 360,
-    (portrait and 305) or 305,
-    (portrait and 0.3) or 0.3,
-    (portrait and 460) or 460
+    (portrait and 360) or 400,
+    (portrait and 305) or 570,
+    (portrait and 0.3) or 0.5,
+    (portrait and 460) or 480
   );
 
-  local artist = gfx.CreateLabel(result.artist, 20, 0);
+  local artist = gfx.CreateLabel(result.artist, (portrait and 20) or 26, 0);
 
   this:drawTitleArtist(
     artist,
-    (portrait and 360) or 360,
-    (portrait and 350) or 350,
-    (portrait and 0.3) or 0.3,
-    (portrait and 460) or 460
+    (portrait and 360) or 400,
+    (portrait and 350) or 630,
+    (portrait and 0.3) or 0.5,
+    (portrait and 460) or 480
   );
 
-  local diffIndex = result.difficulty + 1;
+  if (toggleStats) then
+    if (portrait) then
+      this.images.infoPanelPT:draw({
+        x = 720,
+        y = 654,
+        s = 1 / 3,
+        anchorX = 2
+      });
+    else
+      this.images.infoPanelPT:draw({
+        x = 1280,
+        y = 350,
+        s = 0.45,
+        anchorX = 2
+      });
+    end
 
-  this:drawDifficulty(
-    diffIndex,
-    result.level,
-    (portrait and 422) or 422,
-    (portrait and 456) or 456
-  );
+    local diffIndex = result.difficulty + 1;
 
-  local score = string.format('%08d', result.score);
+    this:drawDifficulty(
+      diffIndex,
+      result.level,
+      (portrait and 422) or 879,
+      (portrait and 456) or 84
+    );
 
-  this:drawScore(
-    score,
-    (portrait and 554) or 554,
-    (portrait and 574) or 574,
-    (portrait and 686) or 686,
-    (portrait and 574) or 574
-  );
+    this:drawGraph(
+      (portrait and 394) or 839,
+      (portrait and 600) or 278,
+      (portrait and 294) or 398,
+      (portrait and 74) or 100
+    );
 
-  if (not grade) or (result.grade ~= lastGrade) then
-    lastGrade = result.grade;
-    this.images.grade = Image.new(string.format('score/%s.png', result.grade));
+    local highScore;
+    local highScoreString;
+    local difference;
+    local positive = true;
+
+    for i, v in ipairs(result.highScores) do
+      if (i == 1) then
+        highScore = v.score;
+      end
+    end
+
+    local score = result.score
+    if (highScore) then
+      difference = score - highScore;
+      highScoreString = string.format('%08d', highScore);
+    end
+
+    local scoreString = string.format('%08d', score);
+
+    if (difference and (difference < 0)) then
+      positive = false;
+    end
+
+    this:drawScore(
+      scoreString,
+      highScoreString,
+      positive,
+      (portrait and 554) or 1054,
+      (portrait and 574) or 242,
+      (portrait and 686) or 1223,
+      (portrait and 574) or 242
+    );
+
+    local metrics = {
+      { 
+        metric = string.format('%d%%', math.floor(result.gauge * 100)),
+        x = (portrait and 653) or 1186,
+        y = (portrait and 697) or 407
+      },
+      { 
+        metric = string.format('%04d', result.perfects),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 723) or 441.5
+      },
+      { 
+        metric = string.format('%04d', result.goods),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 748) or 476
+      },
+      { 
+        metric = string.format('%04d', result.earlies),
+        x = (portrait and 530) or 1020,
+        y = (portrait and 774) or 511
+      },
+      { 
+        metric = string.format('%04d', result.lates),
+        x = (portrait and 645) or 1177,
+        y = (portrait and 774) or 511
+      },
+      { 
+        metric = string.format('%04d', result.misses),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 800) or 545.5
+      },
+      { 
+        metric = string.format('%04d', result.maxCombo),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 825) or 580
+      },
+      { 
+        metric = string.format('%.1f ms', result.medianHitDelta),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 851) or 614
+      },
+      {
+        metric = string.format('%.1f ms', result.meanHitDelta),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 877) or 649.5
+      }
+    };
+
+    this:drawMetrics(metrics);
   end
-
-  this:drawGraph(
-    (portrait and 394) or 394,
-    (portrait and 600) or 600,
-    (portrait and 294) or 294,
-    (portrait and 74) or 74
-  );
-
-  if (not grade) or (result.grade ~= lastGrade) then
-    lastGrade = result.grade;
-    this.images.grade = Image.new(string.format('score/%s.png', result.grade));
-  end
-
-  local metrics = {
-    { 
-      metric = string.format('%d%%', math.floor(result.gauge * 100)),
-      x = (portrait and 653) or 653,
-      y = (portrait and 697) or 697
-    },
-    { 
-      metric = string.format('%04d', result.perfects),
-      x = (portrait and 608) or 608,
-      y = (portrait and 723) or 723
-    },
-    { 
-      metric = string.format('%04d', result.goods),
-      x = (portrait and 608) or 608,
-      y = (portrait and 748) or 748
-    },
-    { 
-      metric = string.format('%04d', result.earlies),
-      x = (portrait and 530) or 530,
-      y = (portrait and 774) or 774
-    },
-    { 
-      metric = string.format('%04d', result.lates),
-      x = (portrait and 645) or 645,
-      y = (portrait and 774) or 774
-    },
-    { 
-      metric = string.format('%04d', result.misses),
-      x = (portrait and 608) or 608,
-      y = (portrait and 800) or 800
-    },
-    { 
-      metric = string.format('%04d', result.maxCombo),
-      x = (portrait and 608) or 608,
-      y = (portrait and 825) or 825
-    },
-    { 
-      metric = string.format('%.1f ms', result.medianHitDelta),
-      x = (portrait and 608) or 608,
-      y = (portrait and 851) or 851
-    },
-    {
-      metric = string.format('%.1f ms', result.meanHitDelta),
-      x = (portrait and 608) or 608,
-      y = (portrait and 877) or 877
-    }
-  };
-
-  this:drawMetrics(metrics);
 end
 
 drawHighScores = function()
-  gfx.Save();
-  gfx.Translate(
-    (portrait and 0) or 0,
-    (portrait and 440) or 440
-  );
-
-  gfx.LoadSkinFont('avantgarde.ttf');
-
-  for i, v in ipairs(result.highScores) do
-    local index = string.format('%d', i);
-    local y = (i - 1) * 86;
-    local score = string.format('%08d', v.score);
-    local scoreLarge = string.sub(score, 1, 4);
-    local scoreSmall = string.sub(score, -4);
-
-    gfx.TextAlign(gfx.TEXT_ALIGN_LEFT);
-
-    gfx.BeginPath();
-    gfx.FillColor(0, 0, 0, 200);
-    gfx.StrokeColor(245, 65, 125, 255);
-    gfx.StrokeWidth(1);
-    gfx.RoundedRect(35, (y - 30), 280, 70, 11);
-    gfx.Fill();
-    gfx.Stroke();
-
-    gfx.BeginPath();
-
-    drawShiftedText(
-      index,
-      { 245, 65, 125, 255 },
-      { 25, 25, 25, 255},
-      25,
-      10,
-      (y - 10),
-      0.8
+  --if (not toggleStats) then
+    gfx.Save();
+    gfx.Translate(
+      (portrait and 0) or 940,
+      (portrait and 440) or 90
     );
 
-    drawShiftedText(
-      scoreLarge,
-      { 245, 65, 125, 255 },
-      { 255, 255, 255, 255},
-      65,
-      42,
-      (y + 31),
-      1.3
-    );
+    gfx.LoadSkinFont('avantgarde.ttf');
 
-    drawShiftedText(
-      scoreSmall,
-      { 245, 65, 125, 255 },
-      { 255, 255, 255, 255},
-      52,
-      190,
-      (y + 31),
-      1.3
-    );
+    for i, v in ipairs(result.highScores) do
+      local index = string.format('%d', i);
+      local y = (i - 1) * 86;
+      local score = string.format('%08d', v.score);
+      local scoreLarge = string.sub(score, 1, 4);
+      local scoreSmall = string.sub(score, -4);
 
-    gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
-    gfx.FontSize(14);
-    gfx.FillColor(255, 255, 255, 80);
-    
-    if (v.timestamp > 0) then
-      gfx.Text(os.date('%m-%d-%Y', v.timestamp), 305, (y - 14));
+      gfx.TextAlign(gfx.TEXT_ALIGN_LEFT);
+
+      gfx.BeginPath();
+      gfx.FillColor(0, 0, 0, 200);
+      gfx.StrokeColor(245, 65, 125, 255);
+      gfx.StrokeWidth(1);
+      gfx.RoundedRect(35, (y - 30), 280, 70, 11);
+      gfx.Fill();
+      gfx.Stroke();
+
+      gfx.BeginPath();
+
+      drawShiftedText(
+        index,
+        { 245, 65, 125, 255 },
+        { 25, 25, 25, 255},
+        25,
+        10,
+        (y - 10),
+        0.8
+      );
+
+      drawShiftedText(
+        scoreLarge,
+        { 245, 65, 125, 255 },
+        { 255, 255, 255, 255},
+        65,
+        42,
+        (y + 31),
+        1.3
+      );
+
+      drawShiftedText(
+        scoreSmall,
+        { 245, 65, 125, 255 },
+        { 255, 255, 255, 255},
+        52,
+        190,
+        (y + 31),
+        1.3
+      );
+
+      gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
+      gfx.FontSize(14);
+      gfx.FillColor(255, 255, 255, 80);
+      
+      if (v.timestamp > 0) then
+        gfx.Text(os.date('%m-%d-%Y', v.timestamp), 305, (y - 14));
+      end
+
+      if (i == 5) then
+        break;
+      end
     end
 
-    if (i == 5) then
-      break;
-    end
-  end
-
-  gfx.Restore();
+    gfx.Restore();
+  --end
 end
 
 drawScreenshotNotification = function(x, y)
@@ -467,7 +524,7 @@ drawScreenshotNotification = function(x, y)
 end
 
 get_capture_rect = function()
-  ResetLayoutInformation();
+  resetLayoutInformation();
 
   local x = (resx - (desw * scale)) / 2;
   local y = (resy - (desh * scale)) / 2;
@@ -483,17 +540,30 @@ screenshot_captured = function(path)
   game.PlaySample('shutter');
 end
 
-local results = Results.new(showStats);
+local results = Results.new();
+local genericTimer = 0;
 
 render = function(deltaTime, showStats)
 
-  ResetLayoutInformation();
+  resetLayoutInformation();
 
+  if (game.GetButton(game.BUTTON_FXR) and game.GetButton(game.BUTTON_FXL)) then
+    genericTimer = genericTimer + deltaTime;
+    if (genericTimer > 0.1) then
+      toggleStats = not toggleStats;
+      genericTimer = 0;
+    end
+  end
+  
   gfx.Scale(scale, scale);
 
-  results:render(deltaTime);
+  if (not grade) then
+    grade = Image.new(string.format('score/%s.png', result.grade));
+  end
 
-  drawHighScores();
+  results:render(showStats);
+
+  --drawHighScores();
 
   shotTimer = math.max(shotTimer - deltaTime, 0);
 

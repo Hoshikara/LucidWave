@@ -1,6 +1,5 @@
 gfx.LoadSkinFont('arial.ttf');
 
--- Memo Class
 Memo = {};
 
 Memo.new = function()
@@ -24,7 +23,6 @@ Memo.memoize = function(this, key, generator)
   return value;
 end
 
--- Image Class
 Image = {
   ANCHOR_CENTER = 1,
   ANCHOR_RIGHT = 2,

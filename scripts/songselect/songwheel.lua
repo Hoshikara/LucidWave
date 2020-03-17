@@ -14,7 +14,7 @@ local xShift;
 local yShift;
 
 
-ResetLayoutInformation = function()
+resetLayoutInformation = function()
   resx, resy = game.GetResolution();
   portrait = resy > resx;
   desw = (portrait and 720) or 1280;
@@ -113,7 +113,6 @@ findDifficulty = function(diffs, diff)
   return difficulty;
 end
 
--- JacketCache Class
 JacketCache = {};
 
 JacketCache.new = function()
@@ -140,7 +139,6 @@ JacketCache.get = function(this, path)
   return Image.wrapper(jacket);
 end
 
--- SongData Class
 SongData = {};
 
 SongData.new = function(jacketCache)
@@ -209,8 +207,12 @@ SongData.drawHighScore = function(this, score, x, y)
   gfx.FillColor(255, 255, 255, 255);
   gfx.FontSize(20)
   gfx.Text(string.sub(scoreString, 1, 4), x, y);
-  gfx.FontSize(15)
-  gfx.Text(string.sub(scoreString, -4), (x + 48), y + 1);
+  gfx.FontSize(16)
+  gfx.Text(
+    string.sub(scoreString, -4),
+    (portrait and (x + 45)) or (x + 46),
+    y + 1
+  );
 end
 
 SongData.drawDifficulty = function(this, index, diff, jacket)
@@ -723,7 +725,7 @@ end
 SongTable.render = function(this, deltaTime)
   if (not portrait) then
     gfx.Save();
-      gfx.Translate(desw / 2.45, - (desh / 2.02));
+      gfx.Translate(522, -358);
       gfx.Scale(1.05, 1.05);
       this:drawSongs();
       this:drawCursor(deltaTime);
@@ -860,7 +862,7 @@ drawLegend = function(deltaTime)
 end
 
 render = function(deltaTime)
-  ResetLayoutInformation();
+  resetLayoutInformation();
 
   currentTime = currentTime + deltaTime;
 
