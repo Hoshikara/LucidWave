@@ -1,4 +1,3 @@
-I will no longer be actively working on this skin as of January 23, 2020, due to outside commitments. However, I plan to keep up with USC updates so it remains compatible. When I first started working on skinning for USC, I wanted to create a skin that I would feel good playing with. At the current state of the master branch, I feel like I accomplished that more or less. There are many things I want to change or improve but now is not the time--hopefully I can continue in the future. Until then, I hope you all enjoy using this skin.
 
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
 
@@ -8,7 +7,7 @@ Make sure your game is up-to-date before using by running 'updater.exe' inside y
 https://github.com/Drewol/unnamed-sdvx-clone
 
 Showcase Video:
-https://www.youtube.com/watch?v=01NKED09qgc
+https://www.youtube.com/watch?v=8hwEkZOtb5k
 
 --------------------------------------------------------------------------------
 
@@ -45,6 +44,14 @@ https://drive.google.com/open?id=14cLldFq0XaaqEj-qoB_5L51PLU_WpOeL
 --------------------------------------------------------------------------------
 
 Changelog:
+
+March 19, 2020
+
+- New landscape menus (titlescreen, song select, and results)
+
+- Widened lasers slightly
+
+- Adjusted early/late appearance slightly
 
 January 12, 2020
 
