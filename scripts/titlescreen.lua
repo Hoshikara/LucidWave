@@ -17,12 +17,12 @@ local portrait
 local desw, desh
 local scale
 
-function ResetLayoutInformation()
-	resx, resy = game.GetResolution()
-	portrait = resy > resx
-    desw = portrait and 720 or 1280 
-    desh = desw * (resy / resx)
-    scale = resx / desw
+resetLayoutInformation = function();
+	resx, resy = game.GetResolution();
+	portrait = resy > resx;
+	desw = (portrait and 720) or 1280 ;
+	desh = desw * (resy / resx);
+	scale = resx / desw;
 end
 
 view_update = function()
@@ -163,9 +163,9 @@ end
 render = function(deltaTime)
 	setButtons()
 
-    mposx, mposy = game.GetMousePos()
+  mposx, mposy = game.GetMousePos()
 
-	ResetLayoutInformation()
+	resetLayoutInformation()
 
 	buttonWidth = portrait and 190 * scale or 132 * scale
 	buttonHeight = portrait and 45 * scale or 32 * scale
@@ -187,8 +187,6 @@ render = function(deltaTime)
 		gfx.Save()
 		gfx.Translate(xshift, yshift);
 		gfx.Scale(scale, scale);
-		--gfx.Translate(xshift, yshift)
-		--gfx.Scale(scale2, scale2)
 		gfx.BeginPath()
 		gfx.ImageRect(0, 0, desw, desh, backgroundLS, 1, 0)
 		gfx.Restore()
@@ -222,7 +220,8 @@ render = function(deltaTime)
     if updateUrl then
 		gfx.BeginPath()
 		gfx.FillColor(0, 0, 0, 225)
-		gfx.Rect(0, resy - rectShift, resx, rectShift)
+		gfx.Rect(0, 0, resx, resy);
+		gfx.Rect(0, desh - rectShift, desw, rectShift)
 		gfx.Fill()
 		gfx.TextAlign(gfx.TEXT_ALIGN_BOTTOM + gfx.TEXT_ALIGN_LEFT)
 		gfx.FontSize(math.floor(24 * scale))

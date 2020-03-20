@@ -26,7 +26,8 @@ end
 Image = {
   ANCHOR_CENTER = 1,
   ANCHOR_RIGHT = 2,
-  ANCHOR_BOTTOM = 3
+  ANCHOR_BOTTOM = 3,
+  ANCHOR_LEFT = 4
 };
 
 Image.new = function(path)
@@ -64,6 +65,8 @@ Image.draw = function(this, params)
 
   if (anchorX == Image.ANCHOR_RIGHT) then
     x = x - w;
+  elseif (anchorX == Image.ANCHOR_LEFT) then
+    x = x;
   else
     x = x - (w / 2);
   end

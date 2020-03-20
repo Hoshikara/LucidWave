@@ -1,5 +1,3 @@
--- TODO: implement high score toggle for landscape
-
 local jacket = nil;
 local shotTimer = 0;
 local shotPath = '';
@@ -55,6 +53,7 @@ Results.new = function()
       backgroundLS = Image.new('result/bg_ls.png'),
       infoPanelPT = Image.new('result/info_panel_pt.png'),
       divider = Image.new('result/divider.png'),
+      legend = Image.new('result/legend.png'),
       difficulties = {
         Image.new('song_select/difficulties/novice.png'),
         Image.new('song_select/difficulties/advanced.png'),
@@ -211,9 +210,10 @@ Results.drawGraph = function(this, x, y, w, h)
   end
 
   grade:draw({
-    x = (portrait and (x + 19)) or (x + 23),
+    x =  x + 4,
     y = (portrait and (y + 17)) or (y + 21),
-    s = (portrait and 0.1) or 0.13
+    s = (portrait and 0.1) or 0.13,
+    anchorX = 4
   });
 end
 
@@ -261,6 +261,14 @@ Results.render = function(this, showStats);
       y = desh / 2,
       w = desw,
       h = desh
+    });
+
+    this.images.legend:draw({
+      x = desw,
+      y = desh,
+      s = 1 / 3,
+      anchorX = 2,
+      anchorY = 3
     });
   end
 
@@ -425,18 +433,18 @@ Results.render = function(this, showStats);
 end
 
 drawHighScores = function()
-  --if (not toggleStats) then
+  if (not toggleStats) then
     gfx.Save();
     gfx.Translate(
-      (portrait and 0) or 940,
-      (portrait and 440) or 90
+      (portrait and 0) or 810,
+      (portrait and 440) or 50
     );
 
     gfx.LoadSkinFont('avantgarde.ttf');
 
     for i, v in ipairs(result.highScores) do
       local index = string.format('%d', i);
-      local y = (i - 1) * 86;
+      local y = (portrait and ((i - 1) * 86)) or ((i - 1) * 140);
       local score = string.format('%08d', v.score);
       local scoreLarge = string.sub(score, 1, 4);
       local scoreSmall = string.sub(score, -4);
@@ -447,7 +455,13 @@ drawHighScores = function()
       gfx.FillColor(0, 0, 0, 200);
       gfx.StrokeColor(245, 65, 125, 255);
       gfx.StrokeWidth(1);
-      gfx.RoundedRect(35, (y - 30), 280, 70, 11);
+      gfx.RoundedRect(
+        35,
+        (y - 30),
+        (portrait and 280) or 410,
+        (portrait and 70) or 100,
+        (portrait and 11) or 13
+      );
       gfx.Fill();
       gfx.Stroke();
 
@@ -457,9 +471,9 @@ drawHighScores = function()
         index,
         { 245, 65, 125, 255 },
         { 25, 25, 25, 255},
-        25,
-        10,
-        (y - 10),
+        (portrait and 25) or 36,
+        (portrait and 10) or 0,
+        (portrait and (y - 10)) or (y - 2),
         0.8
       );
 
@@ -467,9 +481,9 @@ drawHighScores = function()
         scoreLarge,
         { 245, 65, 125, 255 },
         { 255, 255, 255, 255},
-        65,
-        42,
-        (y + 31),
+        (portrait and 65) or 96,
+        (portrait and 42) or 46,
+        (portrait and (y + 31)) or (y + 55),
         1.3
       );
 
@@ -477,18 +491,22 @@ drawHighScores = function()
         scoreSmall,
         { 245, 65, 125, 255 },
         { 255, 255, 255, 255},
-        52,
-        190,
-        (y + 31),
+        (portrait and 52) or 76,
+        (portrait and 190) or 264,
+        (portrait and (y + 31)) or (y + 55),
         1.3
       );
 
       gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
-      gfx.FontSize(14);
+      gfx.FontSize((portrait and 14) or 20);
       gfx.FillColor(255, 255, 255, 80);
       
       if (v.timestamp > 0) then
-        gfx.Text(os.date('%m-%d-%Y', v.timestamp), 305, (y - 14));
+        gfx.Text(
+          os.date('%m-%d-%Y', v.timestamp),
+          (portrait and 305) or 436,
+          (portrait and (y - 14)) or (y - 9)
+        );
       end
 
       if (i == 5) then
@@ -497,7 +515,7 @@ drawHighScores = function()
     end
 
     gfx.Restore();
-  --end
+  end
 end
 
 drawScreenshotNotification = function(x, y)
@@ -549,7 +567,7 @@ render = function(deltaTime, showStats)
 
   if (game.GetButton(game.BUTTON_FXR) and game.GetButton(game.BUTTON_FXL)) then
     genericTimer = genericTimer + deltaTime;
-    if (genericTimer > 0.1) then
+    if (genericTimer > 0.2) then
       toggleStats = not toggleStats;
       genericTimer = 0;
     end
@@ -563,14 +581,14 @@ render = function(deltaTime, showStats)
 
   results:render(showStats);
 
-  --drawHighScores();
+  drawHighScores();
 
   shotTimer = math.max(shotTimer - deltaTime, 0);
 
   if (shotTimer > 1) then
     drawScreenshotNotification(
-      (portrait and 425) or 425,
-      (portrait and 960) or 960
+      (portrait and 425) or 980,
+      (portrait and 960) or 710
     );
   end
 end

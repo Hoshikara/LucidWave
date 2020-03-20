@@ -194,7 +194,7 @@ SongData.drawBPM = function(this, bpm, x, y)
   gfx.BeginPath();
   gfx.LoadSkinFont('avantgarde.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
-  gfx.FontSize(20);
+  gfx.FontSize((portrait and 20) or 18);
   gfx.FillColor(255, 255, 255, 255);
   gfx.Text(bpm, x, y);
 end
@@ -205,13 +205,13 @@ SongData.drawHighScore = function(this, score, x, y)
   gfx.LoadSkinFont('avantgarde.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
   gfx.FillColor(255, 255, 255, 255);
-  gfx.FontSize(20)
+  gfx.FontSize((portrait and 20) or 18)
   gfx.Text(string.sub(scoreString, 1, 4), x, y);
-  gfx.FontSize(16)
+  gfx.FontSize((portrait and 16) or 15)
   gfx.Text(
     string.sub(scoreString, -4),
-    (portrait and (x + 45)) or (x + 46),
-    y + 1
+    (portrait and (x + 45)) or (x + 41),
+    (portrait and (y + 1)) or (y + 0.5)
   );
 end
 
@@ -782,39 +782,39 @@ drawSearch = function(deltaTime)
     searchSound = (songwheel.searchInputActive and 0) or 1;
     gfx.DrawLabel(searchText, 270, 207, 580);
   else
-      gfx.BeginPath();
-      gfx.LoadSkinFont('arial.ttf');
-      gfx.UpdateLabel(
-        searchText,
-        string.format("SEARCH: %s",songwheel.searchText),
-        18,
-        0
-      );
+    gfx.BeginPath();
+    gfx.LoadSkinFont('arial.ttf');
+    gfx.UpdateLabel(
+      searchText,
+      string.format("SEARCH: %s",songwheel.searchText),
+      18,
+      0
+    );
 
-      if (searchIndex ~= ((songwheel.searchInputActive and 0) or 1)) then
-        gfx.BeginPath();
-        gfx.FillColor(0, 0, 0, 100);
-        gfx.Rect(0, 0, resx, resy);
-        gfx.Fill();
-        gfx.FillColor(245, 65, 125, 255)
-      end
-  
+    if (searchIndex ~= ((songwheel.searchInputActive and 0) or 1)) then
       gfx.BeginPath();
-      gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
-      gfx.FillColor(255, 255, 255);
-      gfx.StrokeColor(245, 65, 125, 255);
-      gfx.RoundedRect(845, 10, 420, 24, 12);
-      gfx.StrokeWidth(2);
-      gfx.Stroke();
+      gfx.FillColor(0, 0, 0, 100);
+      gfx.Rect(0, 0, resx, resy);
       gfx.Fill();
-      gfx.FillColor(245, 65, 125, 255);
-  
-      if (searchSound ~= ((songwheel.searchInputActive and 0) or 1)) then
-        game.PlaySample('woosh');
-      end
-  
-      searchSound = (songwheel.searchInputActive and 0) or 1;
-      gfx.DrawLabel(searchText, 855, 20, 580);
+      gfx.FillColor(245, 65, 125, 255)
+    end
+
+    gfx.BeginPath();
+    gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
+    gfx.FillColor(255, 255, 255);
+    gfx.StrokeColor(245, 65, 125, 255);
+    gfx.RoundedRect(845, 10, 420, 24, 12);
+    gfx.StrokeWidth(2);
+    gfx.Stroke();
+    gfx.Fill();
+    gfx.FillColor(245, 65, 125, 255);
+
+    if (searchSound ~= ((songwheel.searchInputActive and 0) or 1)) then
+      game.PlaySample('woosh');
+    end
+
+    searchSound = (songwheel.searchInputActive and 0) or 1;
+    gfx.DrawLabel(searchText, 855, 21, 580);
   end
 end
 
@@ -851,7 +851,7 @@ end
 
 local legend = gfx.CreateSkinImage('song_select/legend.png', 0);
 
-drawLegend = function(deltaTime)
+drawLegend = function()
   local w, h = gfx.ImageSize(legend);
 
   w = w * 1 / 3;
@@ -877,7 +877,7 @@ render = function(deltaTime)
   songTable:render(deltaTime);
 
   if (not portrait) then
-    drawLegend(deltaTime);
+    drawLegend();
   end
 
   drawSearch(deltaTime);
