@@ -47,11 +47,11 @@ void main()
 	
 	float x = fsTex.x;
 
-	float laserSize = 1.05;
+	float laserSize = 1.135;
 
-    x -= 0.525;
+    x -= 0.5675;
     x /= laserSize;
-    x += 0.525;
+    x += 0.5675;
 
 	if (x < 0.0 || x > 1.0)
     {

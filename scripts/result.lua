@@ -1,319 +1,594 @@
-local jacket = nil
-local gradeImg
-local gradear = 1
-local resx, resy = game.GetResolution()
-local desw = 720
-local desh = 1280
-local scale = resy / desh
-local portrait = resy > resx
-local landscape = resx > resy
+local jacket = nil;
+local shotTimer = 0;
+local shotPath = '';
+local played = false;
+local grade = nil;
+local lastGrade = -1;
+local toggleStats = true
 
-local backgroundImage = gfx.CreateSkinImage("song_select/results_bg.jpg", 0)
-local bgFill = gfx.CreateSkinImage("bg_fill.png", 0)
+game.LoadSkinSample('result');
+game.LoadSkinSample('shutter');
 
-local novice = gfx.CreateSkinImage("song_select/level/novice.png", 0)
-local advanced = gfx.CreateSkinImage("song_select/level/advanced.png", 0)
-local exhaust = gfx.CreateSkinImage("song_select/level/exhaust.png", 0)
-local maximum = gfx.CreateSkinImage("song_select/level/maximum.png", 0)
+local resx;
+local resy;
+local desw;
+local desh;
+local scale;
+local xShift;
+local yShift;
 
-local difficulties = {novice, advanced, exhaust, maximum}
+resetLayoutInformation = function()
+  resx, resy = game.GetResolution();
+  portrait = resy > resx;
+  desw = (portrait and 720) or 1280;
+  desh = desw * (resy / resx);
+  scale = resx / desw;
+  xShift = (resx - (desw * scale)) / 2;
+  yShift = (resy - (desh * scale)) / 2;
+end
 
-local shotTimer = 0
-local shotPath = ""
+drawAberratedText = function(text, x, y, offset)
+  gfx.FillColor(245, 65, 125, 255);
+  gfx.Text(text, x, (y + offset));
+  gfx.FillColor(55, 255, 255, 255);
+  gfx.Text(text, (x + offset), y);
+  gfx.FillColor(255, 255, 255, 255)
+  gfx.Text(text, x, y);
+end
 
-local played = false
+drawShiftedText = function(text, color1, color2, size, x, y, offset)
+  gfx.FontSize(size);
+  gfx.FillColor(color1[1], color1[2], color1[3], color1[4]);
+  gfx.Text(text, (x + offset), (y + offset));
+  gfx.FillColor(color2[1], color2[2], color2[3], color2[4]);
+  gfx.Text(text, x, y);
+end
 
-game.LoadSkinSample("result")
-game.LoadSkinSample("shutter")
+Results = {};
 
-render = function(deltaTime, showStats)
-    if (result.badge > 1) and not played then
-		game.PlaySample("result", true)
-		played = true
-	end
+Results.new = function()
+  local this = {
+    images = {
+      backgroundPT = Image.new('result/bg_pt.jpg'),
+      backgroundLS = Image.new('result/bg_ls.png'),
+      infoPanelPT = Image.new('result/info_panel_pt.png'),
+      divider = Image.new('result/divider.png'),
+      legend = Image.new('result/legend.png'),
+      difficulties = {
+        Image.new('song_select/difficulties/novice.png'),
+        Image.new('song_select/difficulties/advanced.png'),
+        Image.new('song_select/difficulties/exhaust.png'),
+        Image.new('song_select/difficulties/maximum.png')
+      },
+    }
+  };
 
-	if game.GetButton(game.BUTTON_STA) then
-		game.StopSample("result")
-	elseif game.GetButton(game.BUTTON_BCK) then
-		game.StopSample("result")
+  setmetatable(this, { __index = Results });
+
+  return this;
+end
+
+Results.drawJacket = function(this, jacket, x, y, w, h)
+  local x1 = x - (w / 2);
+  local y1 = y - (h / 2);
+
+  gfx.BeginPath();
+  gfx.FillColor(245, 65, 125, 255);
+  gfx.Rect((x1 - 4), (y1 - 4), w, h);
+  gfx.Fill();
+
+  gfx.BeginPath();
+  gfx.FillColor(15, 225, 225, 255);
+  gfx.Rect((x1 + 4), (y1 + 4), w, h);
+  gfx.Fill();
+
+  gfx.BeginPath();
+  gfx.FillColor(255, 255, 255, 255);
+  gfx.Rect((x1 - 2), (y1 - 2), (w + 4), (h + 4));
+  gfx.Fill();
+
+  gfx.BeginPath();
+  gfx.ImageRect(x1, y1, w, h, jacket, 1, 0);
+end
+
+Results.drawTitleArtist = function(this, label, x, y, offset, maxWidth)
+  gfx.BeginPath();
+  gfx.TextAlign(gfx.TEXT_ALIGN_CENTER);
+  gfx.FillColor(245, 65, 125, 255);
+  gfx.DrawLabel(label, (x + offset), (y + offset), maxWidth);
+  gfx.FillColor(25, 25, 25, 255);
+  gfx.DrawLabel(label, x, y, maxWidth);
+end
+
+Results.drawDifficulty = function(this, index, level, x, y)
+  this.images.difficulties[index]:draw({
+    x = x,
+    y = y,
+    s = (portrait and 0.25) or 0.35
+  });
+
+  local x2;
+
+  if (level >= 10) then
+    x2 = (portrait and 421) or 878
+  else
+    x2 = (portrait and 424) or 881
+  end
+
+  gfx.BeginPath();
+  gfx.LoadSkinFont('slant.ttf');
+  gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE);
+  gfx.FontSize((portrait and 38) or 48);
+  drawAberratedText(
+    string.format('%02d', level),
+    x2,
+    (portrait and (y - 5)) or (y - 6),
+    (portrait and 0.5) or 0.8
+  );
+end
+
+Results.drawScore = function(this, score, highScore, positive, x1, y1, x2, y2)
+  local scoreLarge = string.sub(score, 1, 4);
+  local scoreSmall = string.sub(score, -4);
+
+  gfx.BeginPath();
+  gfx.LoadSkinFont('avantgarde.ttf');
+  gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
+
+  drawShiftedText(
+    scoreLarge,
+    { 245, 65, 125, 255 },
+    { 25, 25, 25, 255 },
+    (portrait and 72) or 94,
+    x1,
+    y1,
+    1
+  );
+
+  drawShiftedText(
+    scoreSmall,
+    { 245, 65, 125, 255 },
+    { 25, 25, 25, 255 },
+    (portrait and 58) or 75,
+    x2,
+    y2,
+    1
+  );
+
+  if (not portrait) then
+    gfx.BeginPath();
+    gfx.FillColor(255, 255, 255, 255);
+    gfx.StrokeColor(245, 65, 125, 255);
+    gfx.RoundedRect(1154, 248, 200, 26, 12);
+    gfx.Fill();
+    gfx.Stroke();
+
+    if (highScore) then
+      gfx.BeginPath();
+      gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
+      gfx.FontSize(24);
+      
+      if (positive == true) then
+        gfx.FillColor(55, 105, 255, 255);
+      else
+        gfx.FillColor(255, 25, 25, 255);
+      end
+      gfx.Text(highScore, 1274, 270);
     end
-   
-	-- LANDSCAPE FILL
-	gfx.BeginPath()
-	gfx.FillColor(255, 255, 255)
-	gfx.ImageRect(0, 0, resx, resy, bgFill, 1, 0)
-	 
-	gfx.Scale(scale, scale)
+  end
+end
 
-	-- DRAW BACKGROUND (LANDSCAPE)
-	if landscape then
-		local xshift = (resx - desw * scale) / 2
-		local yshift = (resy - desh * scale) / 2
+Results.drawGraph = function(this, x, y, w, h)
+  gfx.BeginPath();
+  gfx.FillColor(0, 0, 0, 255);
+  gfx.Rect(x, y, w, h);
+  gfx.Fill();
 
-		gfx.Scale(1/scale, 1/scale)
-		gfx.Translate(xshift, yshift)
-		gfx.Scale(scale, scale)
+  gfx.BeginPath();
+  gfx.MoveTo(x, y + h - (h * result.gaugeSamples[1]));
 
-		gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(0, 0, desw, desh, backgroundImage, 1, 0)
-		gfx.Fill()
+  for i = 2, #result.gaugeSamples do
+    gfx.LineTo(x + i * (w / #result.gaugeSamples), y + h - (h * result.gaugeSamples[i]));
+  end
 
-	end
+  if ((result.flags & 1) ~= 0) then
+    gfx.StrokeWidth(2);
+    gfx.StrokeColor(255, 0, 255, 255);
+    gfx.Stroke();
+  else
+    gfx.StrokeWidth(2);
 
-	-- DRAW BACKGROUND (PORTRAIT)
-	if portrait then
-		gfx.Scale(1/scale, 1/scale)
+    gfx.StrokeColor(15, 225, 225, 255);
+    gfx.Scissor(x, (y + (h * 0.3)), w, (h * 0.7));
+    gfx.Stroke();
+    gfx.ResetScissor();
 
-		gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(0, 0, resx, resy, backgroundImage, 1, 0)
-		gfx.Fill()
+    gfx.StrokeColor(245, 65, 125, 255);
+    gfx.Scissor(x, y, w, (h * 0.3));
+    gfx.Stroke();
+    gfx.ResetScissor();
+  end
 
-		gfx.Scale(scale, scale)
-	end
+  grade:draw({
+    x =  x + 4,
+    y = (portrait and (y + 17)) or (y + 21),
+    s = (portrait and 0.1) or 0.13,
+    anchorX = 4
+  });
+end
 
-	-- JACKET FILL
-	if jacket == nil then
-        jacket = gfx.CreateImage(result.jacketPath, 0)
+Results.drawMetrics = function(this, metrics)
+  gfx.BeginPath();
+  gfx.LoadSkinFont('avantgarde.ttf');
+  gfx.TextAlign(gfx.TEXT_ALIGN_CENTER);
+  gfx.FontSize((portrait and 18) or 21);
+
+  for i = 1, #metrics do
+    local metric = metrics[i].metric;
+    local x = metrics[i].x;
+    local y = metrics[i].y;
+
+    if (i == 1) then
+      gfx.FillColor(0, 0, 0, 255);
+    else
+      gfx.FillColor(255, 255, 255, 255);
     end
 
-	-- DRAW JACKET
-	if jacket then
-		gfx.BeginPath()
-		gfx.FillColor(0, 0, 0, 0)
-		gfx.StrokeColor(245, 65, 125)
-		gfx.StrokeWidth(6)
-		gfx.Rect((desw / 3.16)-2, 25, 265, 265)
-		gfx.Fill()
-		gfx.Stroke()
+    gfx.Text(metric, x, y);
+  end
+end
 
-		gfx.BeginPath()
-		gfx.FillColor(0, 0, 0, 0)
-		gfx.StrokeColor(15, 225, 225)
-		gfx.StrokeWidth(6)
-		gfx.Rect((desw / 3.16) + 2, 29, 265, 265)
-		gfx.Fill()
-		gfx.Stroke()
+Results.render = function(this, showStats);
+  if (result.badge > 1) and (not played) then
+    game.PlaySample('result', true);
+    played = true;
+  end
 
-		gfx.BeginPath()
-		gfx.FillColor(0, 0, 0, 0)
-		gfx.StrokeColor(25, 25, 25)
-		gfx.StrokeWidth(6)
-		gfx.Rect((desw / 3.16), 27, 265, 265)
-		gfx.Fill()
-		gfx.Stroke()
+  if (game.GetButton(game.BUTTON_STA) or game.GetButton(game.BUTTON_BCK)) then
+    game.StopSample('result');
+  end
 
-        gfx.ImageRect((desw / 3.16), 27, 265, 265, jacket, 1, 0)
+  if (portrait) then
+    this.images.backgroundPT:draw({
+      x = desw / 2,
+      y = desh / 2,
+      w = desw,
+      h = desh
+    });
+  else
+    this.images.backgroundLS:draw({
+      x = desw / 2,
+      y = desh / 2,
+      w = desw,
+      h = desh
+    });
+
+    this.images.legend:draw({
+      x = desw,
+      y = desh,
+      s = 1 / 3,
+      anchorX = 2,
+      anchorY = 3
+    });
+  end
+
+  if (jacket == nil) then
+    jacket = gfx.CreateImage(result.jacketPath, 0);
+  end
+
+  if (jacket) then
+    this:drawJacket(
+      jacket,
+      (portrait and 360) or 400,
+      (portrait and 160) or 280,
+      (portrait and 265) or 460,
+      (portrait and 265) or 460
+    );
+  end
+
+  this.images.divider:draw({
+    x = (portrait and 359.5) or 400,
+    y = (portrait and 326) or 600,
+    s = (portrait and (1 / 3)) or 0.42
+  });
+
+  gfx.LoadSkinFont('arial.ttf');
+  
+  local title = gfx.CreateLabel(result.title, (portrait and 24) or 34, 0);
+
+  this:drawTitleArtist(
+    title,
+    (portrait and 360) or 400,
+    (portrait and 305) or 570,
+    (portrait and 0.3) or 0.5,
+    (portrait and 460) or 480
+  );
+
+  local artist = gfx.CreateLabel(result.artist, (portrait and 20) or 26, 0);
+
+  this:drawTitleArtist(
+    artist,
+    (portrait and 360) or 400,
+    (portrait and 350) or 630,
+    (portrait and 0.3) or 0.5,
+    (portrait and 460) or 480
+  );
+
+  if (toggleStats) then
+    if (portrait) then
+      this.images.infoPanelPT:draw({
+        x = 720,
+        y = 654,
+        s = 1 / 3,
+        anchorX = 2
+      });
+    else
+      this.images.infoPanelPT:draw({
+        x = 1280,
+        y = 350,
+        s = 0.45,
+        anchorX = 2
+      });
     end
 
-	-- DRAW TITLE AND ARTIST
-    gfx.LoadSkinFont("arial.ttf")
-	gfx.TextAlign(gfx.TEXT_ALIGN_CENTER)
+    local diffIndex = result.difficulty + 1;
 
-	local title = gfx.CreateLabel(result.title, 24, 0)
-	local artist = gfx.CreateLabel(result.artist, 19, 0)
+    this:drawDifficulty(
+      diffIndex,
+      result.level,
+      (portrait and 422) or 879,
+      (portrait and 456) or 84
+    );
 
-	gfx.FillColor(245, 65, 125)
-	gfx.DrawLabel(title, (desw / 2)+0.3, (desh / 4) - 14.8, 460)
-	gfx.DrawLabel(artist, (desw / 2)+0.3, (desh / 4) + 31.2, 460)
+    this:drawGraph(
+      (portrait and 394) or 839,
+      (portrait and 600) or 278,
+      (portrait and 294) or 398,
+      (portrait and 74) or 100
+    );
 
-	gfx.FillColor(25, 25, 25)
-	gfx.DrawLabel(title, (desw / 2), (desh / 4) - 15, 460)
-	gfx.DrawLabel(artist, (desw / 2), (desh / 4) + 31, 460)
+    local highScore;
+    local highScoreString;
+    local difference;
+    local positive = true;
 
-	-- DRAW DIFFICULTY BADGE
-	gfx.BeginPath()
-	gfx.FillColor(255, 255, 255)
-	gfx.ImageRect((desw / 2) + 14, (desh/3) - 7, 97, 71, difficulties[result.difficulty + 1], 1, 0)
-	gfx.Fill()
-	
-	gfx.BeginPath()
-	gfx.LoadSkinFont("slant.ttf")
-	gfx.TextAlign(gfx.TEXT_ALIGN_CENTER)
-	gfx.FontSize(38)
-	gfx.FillColor(255, 255, 255)
-
-	if result.level >= 10 then
-		gfx.Text(string.format("%02d", result.level), (desw / 2)+61, (desh/3)+35)
-	else
-		gfx.Text(string.format("%02d", result.level), (desw / 2)+64, (desh/3)+35)
-	end
-
-	-- DRAW SCORE
-	gfx.BeginPath()
-    gfx.LoadSkinFont("avantgarde.ttf")
-    gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_RIGHT)
-
-	scoreString = string.format("%08d", result.score)
-	
-	gfx.FillColor(245, 65, 125)
-	gfx.FontSize(72)
-	gfx.Text(string.sub(scoreString, 1, 4), (desw/2)+198, (desh/2)-65)
-	gfx.FontSize(58)
-	gfx.Text(string.sub(scoreString, -4), (desw/2)+326, (desh/2)-65)
-
-	gfx.FillColor(25, 25, 25)
-	gfx.FontSize(72)
-	gfx.Text(string.sub(scoreString, 1, 4), (desw/2)+197, (desh/2)-66)
-	gfx.FontSize(58)
-	gfx.Text(string.sub(scoreString, -4), (desw/2)+325, (desh/2)-66)
-
-	-- GRADE IMAGE
-	if not gradeImg then
-        gradeImg = gfx.CreateSkinImage(string.format("score/%s.png", result.grade),0)
-        local gradeW, gradeH = gfx.ImageSize(gradeImg)
-        gradear = gradeW / gradeH
+    for i, v in ipairs(result.highScores) do
+      if (i == 1) then
+        highScore = v.score;
+      end
     end
 
-	-- DRAW PERFORMANCE GRAPH
-	drawGraph((desw / 2) + 34, (desh / 2) - 40, 294, 74)
-
-	-- DRAW GRADE
-    gfx.BeginPath()
-    gfx.ImageRect((desw / 2) + 38, (desh / 2) - 38, 25 * gradear, 25, gradeImg, 1, 0)
-
-	-- DRAW RESULT PERCENTAGE
-    gfx.BeginPath()
-	gfx.LoadSkinFont("avantgarde.ttf")
-	gfx.FontSize(18)
-	gfx.FillColor(0, 0, 0)
-    gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_RIGHT)
-    gfx.Text(string.format("%d%%", math.floor(result.gauge * 100)), (desw / 2) + 293,(desh / 2) + 57)
-
-	-- DRAW STATS
-	gfx.BeginPath()
-	gfx.TextAlign(gfx.TEXT_ALIGN_CENTER, gfx.TEXT_ALIGN_RIGHT)
-	gfx.FillColor(255, 255, 255)
-
-	gfx.Text(string.format("%04d", result.perfects), desw-112, (desh/2)+83)
-	gfx.Text(string.format("%04d", result.goods), desw-112, (desh/2)+108)
-
-	gfx.Text(string.format("%04d", result.earlies), desw-190, (desh/2)+134)
-	gfx.Text(string.format("%04d", result.lates), desw-75, (desh/2)+134)
-
-	gfx.Text(string.format("%04d", result.misses), desw-112, (desh/2)+160)
-	gfx.Text(string.format("%04d", result.maxCombo), desw-112, (desh/2)+185)
-
-	gfx.Text(string.format("%.1f ms", result.medianHitDelta), desw-112, (desh/2)+211)
-	gfx.Text(string.format("%.1f ms", result.meanHitDelta), desw-112, (desh/2)+237)
-
-	drawHighscores()
-
-	gfx.LoadSkinFont("avantgarde.ttf")
-    shotTimer = math.max(shotTimer - deltaTime, 0)
-    if shotTimer > 1 then
-        draw_shotnotif(desw/2+65, desh-320);
+    local score = result.score
+    if (highScore) then
+      difference = score - highScore;
+      highScoreString = string.format('%08d', highScore);
     end
+
+    local scoreString = string.format('%08d', score);
+
+    if (difference and (difference < 0)) then
+      positive = false;
+    end
+
+    this:drawScore(
+      scoreString,
+      highScoreString,
+      positive,
+      (portrait and 554) or 1054,
+      (portrait and 574) or 242,
+      (portrait and 686) or 1223,
+      (portrait and 574) or 242
+    );
+
+    local metrics = {
+      { 
+        metric = string.format('%d%%', math.floor(result.gauge * 100)),
+        x = (portrait and 653) or 1186,
+        y = (portrait and 697) or 407
+      },
+      { 
+        metric = string.format('%04d', result.perfects),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 723) or 441.5
+      },
+      { 
+        metric = string.format('%04d', result.goods),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 748) or 476
+      },
+      { 
+        metric = string.format('%04d', result.earlies),
+        x = (portrait and 530) or 1020,
+        y = (portrait and 774) or 511
+      },
+      { 
+        metric = string.format('%04d', result.lates),
+        x = (portrait and 645) or 1177,
+        y = (portrait and 774) or 511
+      },
+      { 
+        metric = string.format('%04d', result.misses),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 800) or 545.5
+      },
+      { 
+        metric = string.format('%04d', result.maxCombo),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 825) or 580
+      },
+      { 
+        metric = string.format('%.1f ms', result.medianHitDelta),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 851) or 614
+      },
+      {
+        metric = string.format('%.1f ms', result.meanHitDelta),
+        x = (portrait and 608) or 1130,
+        y = (portrait and 877) or 649.5
+      }
+    };
+
+    this:drawMetrics(metrics);
+  end
+end
+
+drawHighScores = function()
+  if (not toggleStats) then
+    gfx.Save();
+    gfx.Translate(
+      (portrait and 0) or 810,
+      (portrait and 440) or 50
+    );
+
+    gfx.LoadSkinFont('avantgarde.ttf');
+
+    for i, v in ipairs(result.highScores) do
+      local index = string.format('%d', i);
+      local y = (portrait and ((i - 1) * 86)) or ((i - 1) * 140);
+      local score = string.format('%08d', v.score);
+      local scoreLarge = string.sub(score, 1, 4);
+      local scoreSmall = string.sub(score, -4);
+
+      gfx.TextAlign(gfx.TEXT_ALIGN_LEFT);
+
+      gfx.BeginPath();
+      gfx.FillColor(0, 0, 0, 200);
+      gfx.StrokeColor(245, 65, 125, 255);
+      gfx.StrokeWidth(1);
+      gfx.RoundedRect(
+        35,
+        (y - 30),
+        (portrait and 280) or 410,
+        (portrait and 70) or 100,
+        (portrait and 11) or 13
+      );
+      gfx.Fill();
+      gfx.Stroke();
+
+      gfx.BeginPath();
+
+      drawShiftedText(
+        index,
+        { 245, 65, 125, 255 },
+        { 25, 25, 25, 255},
+        (portrait and 25) or 36,
+        (portrait and 10) or 0,
+        (portrait and (y - 10)) or (y - 2),
+        0.8
+      );
+
+      drawShiftedText(
+        scoreLarge,
+        { 245, 65, 125, 255 },
+        { 255, 255, 255, 255},
+        (portrait and 65) or 96,
+        (portrait and 42) or 46,
+        (portrait and (y + 31)) or (y + 55),
+        1.3
+      );
+
+      drawShiftedText(
+        scoreSmall,
+        { 245, 65, 125, 255 },
+        { 255, 255, 255, 255},
+        (portrait and 52) or 76,
+        (portrait and 190) or 264,
+        (portrait and (y + 31)) or (y + 55),
+        1.3
+      );
+
+      gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT);
+      gfx.FontSize((portrait and 14) or 20);
+      gfx.FillColor(255, 255, 255, 80);
+      
+      if (v.timestamp > 0) then
+        gfx.Text(
+          os.date('%m-%d-%Y', v.timestamp),
+          (portrait and 305) or 436,
+          (portrait and (y - 14)) or (y - 9)
+        );
+      end
+
+      if (i == 5) then
+        break;
+      end
+    end
+
+    gfx.Restore();
+  end
+end
+
+drawScreenshotNotification = function(x, y)
+  gfx.Save();
+
+  gfx.Translate(x, y);
+
+  gfx.BeginPath();
+  gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_TOP);
+  gfx.RoundedRect(-10, -40, 300, 40, 10);
+  gfx.FillColor(0, 0, 0, 200);
+  gfx.StrokeColor(245, 65, 125, 255);
+  gfx.StrokeWidth(1);
+  gfx.Fill();
+  gfx.Stroke();
+
+  gfx.BeginPath();
+  gfx.FillColor(255, 255, 255, 255);
+  gfx.FontSize(15);
+  gfx.Text('Screenshot saved to: ', -4, -35);
+  gfx.Text(shotPath, -4 , -17);
+
+  gfx.Restore();
 end
 
 get_capture_rect = function()
-	local x = (resx - desw * scale) / 2
-	local y = (resy - desh * scale) / 2
-	local w = desw * scale
-	local h = desh * scale
+  resetLayoutInformation();
 
-    return x,y,w,h
+  local x = (resx - (desw * scale)) / 2;
+  local y = (resy - (desh * scale)) / 2;
+  local w = desw * scale;
+  local h = desh * scale;
+
+  return x, y, w, h;
 end
 
 screenshot_captured = function(path)
-    shotTimer = 5
-	shotPath = path
-    game.PlaySample("shutter")
+  shotTimer = 5;
+  shotPath = path;
+  game.PlaySample('shutter');
 end
 
-draw_shotnotif = function(x,y)
-    gfx.Save()
-    gfx.Translate(x,y)
-    gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_TOP)
-    gfx.BeginPath()
-	gfx.RoundedRectVarying(-10, -40, 300, 40, 10, 10, 10, 10)
-    gfx.FillColor(0, 0, 0, 190)
-    gfx.StrokeColor(245, 65, 125)
-    gfx.Fill()
-    gfx.Stroke()
-    gfx.FillColor(255, 255, 255)
-    gfx.FontSize(15)
-    gfx.Text("Screenshot saved to:", -4, -35)
-	    gfx.Text(shotPath, -4, -17)
-    gfx.Restore()
-end
+local results = Results.new();
+local genericTimer = 0;
 
-drawGraph = function(x, y, w, h)
-    gfx.BeginPath()
-    gfx.Rect(x, y, w, h)
-    gfx.FillColor(0, 0, 0, 255)
-    gfx.Fill()    
-    gfx.BeginPath()
-    gfx.MoveTo(x, y + h - h * result.gaugeSamples[1])
+render = function(deltaTime, showStats)
 
-    for i = 2, #result.gaugeSamples do
-        gfx.LineTo(x + i * w / #result.gaugeSamples,y + h - h * result.gaugeSamples[i])
+  resetLayoutInformation();
+
+  if (game.GetButton(game.BUTTON_FXR) and game.GetButton(game.BUTTON_FXL)) then
+    genericTimer = genericTimer + deltaTime;
+    if (genericTimer > 0.2) then
+      toggleStats = not toggleStats;
+      genericTimer = 0;
     end
+  end
+  
+  gfx.Scale(scale, scale);
 
-	if result.flags & 1 ~= 0 then
-		gfx.StrokeWidth(2)
-		gfx.StrokeColor(245, 65, 125)
-		gfx.Stroke()
-	else
-		gfx.StrokeWidth(2)
-		gfx.StrokeColor(15, 255, 255)
-		gfx.Scissor(x, y + h * 0.3, w, h * 0.7)
-		gfx.Stroke()
-		gfx.ResetScissor()
-		gfx.Scissor(x, y, w, h*0.3)
-		gfx.StrokeColor(255, 0, 255)
-		gfx.Stroke()
-		gfx.ResetScissor()
-	end
-end
+  if (not grade) then
+    grade = Image.new(string.format('score/%s.png', result.grade));
+  end
 
-drawHighscores = function()
-    gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
-    gfx.LoadSkinFont("avantgarde.ttf")
+  results:render(showStats);
 
-    for i,s in ipairs(result.highScores) do
-        gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
-        gfx.BeginPath()
+  drawHighScores();
 
-        local ypos = (desh / 3) + 13 + (i - 1) * 86
-		
-        gfx.RoundedRectVarying(35, ypos - 30, 280, 70, 11, 11, 11, 11)
-        gfx.FillColor(0, 0, 0, 190)
-        gfx.StrokeColor(245, 65, 125)
-        gfx.StrokeWidth(1)
-        gfx.Fill()
-        gfx.Stroke()
-        gfx.BeginPath()
-        gfx.FontSize(25)
-		gfx.FillColor(245, 65, 125)
-        gfx.Text(string.format("%d", i), 10.5, ypos - 9.5)
-		gfx.FillColor(25, 25, 25)
-        gfx.Text(string.format("%d",i), 10, ypos - 10)
+  shotTimer = math.max(shotTimer - deltaTime, 0);
 
-		scoreString1 = string.format("%08d", s.score)
-
-		gfx.FillColor(245, 65, 125)
-        gfx.FontSize(65)
-        gfx.Text(string.sub(scoreString1, 1, 4), 43.3, ypos+32.3)
-		gfx.FontSize(52)
-		gfx.Text(string.sub(scoreString1, -4), 191.3, ypos+32.3)
-
-		gfx.FillColor(255, 255, 255)
-        gfx.FontSize(65)
-        gfx.Text(string.sub(scoreString1, 1, 4), 42, ypos+31)
-		gfx.FontSize(52)
-		gfx.Text(string.sub(scoreString1, -4), 190, ypos+31)
-
-        gfx.FontSize(14)
-		gfx.FillColor(255, 255, 255, 75)
-		gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT)
-        if s.timestamp > 0 then
-            gfx.Text(os.date("%m-%d-%Y", s.timestamp), 305, ypos - 14)
-        end
-
-		if i == 5 then
-			break
-		end
-    end
+  if (shotTimer > 1) then
+    drawScreenshotNotification(
+      (portrait and 425) or 980,
+      (portrait and 960) or 710
+    );
+  end
 end

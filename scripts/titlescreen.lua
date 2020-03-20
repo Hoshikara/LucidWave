@@ -6,8 +6,8 @@ local label = -1
 local buttonWidth = 0
 local buttonHeight = 0
 
-local backgroundImage = gfx.CreateSkinImage("song_select/title_bg.jpg", 0)
-local bgFill = gfx.CreateSkinImage("bg_fill.png", 0)
+local backgroundPT = gfx.CreateSkinImage("song_select/title_bg_pt.jpg", 0)
+local backgroundLS = gfx.CreateSkinImage("song_select/title_bg_ls.png", 0)
 
 local cursorYs = {}
 local buttons = nil
@@ -17,12 +17,12 @@ local portrait
 local desw, desh
 local scale
 
-function ResetLayoutInformation()
-	resx, resy = game.GetResolution()
-	portrait = resy > resx
-    desw = portrait and 720 or 1280 
-    desh = desw * (resy / resx)
-    scale = resx / desw
+resetLayoutInformation = function();
+	resx, resy = game.GetResolution();
+	portrait = resy > resx;
+	desw = (portrait and 720) or 1280 ;
+	desh = desw * (resy / resx);
+	scale = resx / desw;
 end
 
 view_update = function()
@@ -66,7 +66,7 @@ function drawButton(button, x, y)
 		gfx.FillColor(100, 100, 100)
 	end
 
-    gfx.RoundedRect(rx, ty - buttonBorder, buttonWidth, buttonHeight, portrait and 22 * scale or 14 * scale)
+    gfx.RoundedRect(rx, ty - buttonBorder, buttonWidth, buttonHeight, portrait and 22 * scale or 16 * scale)
 	gfx.Fill()
 	gfx.Stroke()
 
@@ -74,7 +74,7 @@ function drawButton(button, x, y)
 
     gfx.BeginPath()
     gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE)
-	gfx.FontSize(portrait and math.floor(36 * scale) or math.floor (20 * scale))
+	gfx.FontSize(portrait and math.floor(36 * scale) or math.floor (24 * scale))
 	gfx.FillColor(125, 125, 125)
     gfx.Text(name, portrait and x + shift or (x + shift / 2), portrait and y + shift or (y + shift / 2))
 	gfx.Fill()
@@ -108,14 +108,14 @@ function drawCursor(x, y, deltaTime)
 	gfx.StrokeColor(200, 200, 200, 255)
 	gfx.StrokeWidth(portrait and math.floor(4 * scale) or math.floor(3 * scale))
 	gfx.FillColor(0, 0, 0, 0)
-	gfx.RoundedRect(rx, ty, buttonWidth, buttonHeight, portrait and 22 * scale or 14 * scale)
+	gfx.RoundedRect(rx, ty, buttonWidth, buttonHeight, portrait and 22 * scale or 16 * scale)
 	gfx.Fill()
 	gfx.Stroke()
 
 	gfx.StrokeColor(255, 220, 100, 255)
 	gfx.StrokeWidth(portrait and math.floor(3 * scale) or math.floor(2 * scale))
 	gfx.FillColor(0, 0, 0, 0)
-	gfx.RoundedRect(rx, ty, buttonWidth, buttonHeight, portrait and 22 * scale or 14 * scale)
+	gfx.RoundedRect(rx, ty, buttonWidth, buttonHeight, portrait and 22 * scale or 16 * scale)
 	gfx.Fill()
 	gfx.Stroke()
 
@@ -163,41 +163,39 @@ end
 render = function(deltaTime)
 	setButtons()
 
-    mposx, mposy = game.GetMousePos()
+  mposx, mposy = game.GetMousePos()
 
-	ResetLayoutInformation()
+	resetLayoutInformation()
 
-	buttonWidth = portrait and 190 * scale or 110 * scale
-	buttonHeight = portrait and 45 * scale or 27 * scale
+	buttonWidth = portrait and 190 * scale or 132 * scale
+	buttonHeight = portrait and 45 * scale or 32 * scale
 
 	local desw2 = 720
 	local desh2 = 1280
 	local scale2 = resy / desh2
-	local xshift = (resx - desw2 * scale2) / 2
-	local yshift = (resy - desh2 * scale2) / 2
+	local xshift = (resx - desw * scale) / 2
+	local yshift = (resy - desh * scale) / 2
+
 
 	if portrait then
 		gfx.Save()
 		gfx.BeginPath()
 		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(0, 0, resx, resy, backgroundImage, 1, 0)
+		gfx.ImageRect(0, 0, resx, resy, backgroundPT, 1, 0)
 		gfx.Restore()
 	else
 		gfx.Save()
+		gfx.Translate(xshift, yshift);
+		gfx.Scale(scale, scale);
 		gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(0, 0, resx, resy, bgFill, 1, 0)
-		gfx.Translate(xshift, yshift)
-		gfx.Scale(scale2, scale2)
-		gfx.BeginPath()
-		gfx.ImageRect(0, 0, desw2, desh2, backgroundImage, 1, 0)
+		gfx.ImageRect(0, 0, desw, desh, backgroundLS, 1, 0)
 		gfx.Restore()
 	end
 
 	gfx.BeginPath()
 
 	cursorGet = 1
-    buttonY = portrait and (resy / 2) + (17 * scale) or (resy / 2) + (7 * scale)
+    buttonY = (portrait and ((resy / 2) + (17 * scale))) or ((resy / 2) + (7 * scale) + (desw / 10));
     hovered = nil
 	
     gfx.LoadSkinFont("slant.ttf")
@@ -222,7 +220,8 @@ render = function(deltaTime)
     if updateUrl then
 		gfx.BeginPath()
 		gfx.FillColor(0, 0, 0, 225)
-		gfx.Rect(0, resy - rectShift, resx, rectShift)
+		gfx.Rect(0, 0, resx, resy);
+		gfx.Rect(0, desh - rectShift, desw, rectShift)
 		gfx.Fill()
 		gfx.TextAlign(gfx.TEXT_ALIGN_BOTTOM + gfx.TEXT_ALIGN_LEFT)
 		gfx.FontSize(math.floor(24 * scale))

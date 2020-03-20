@@ -20,6 +20,9 @@ local folderLabels = {}
 local levelOffset = 0;
 local folderOffset = 0;
 
+local resx, resy = game.GetResolution();
+local portrait = resy > resx;
+
 render = function(deltaTime, shown)
 	gfx.Save()
 
@@ -34,14 +37,18 @@ render = function(deltaTime, shown)
             levelLabels[i] = gfx.CreateLabel(l, 40, 0)
         end
     end
-	gfx.Translate(135, 307)
+    if portrait then
+        gfx.Translate(135, 307)
+    else
+        gfx.Translate(35, 627)
+    end
 	gfx.Scale(0.45, 0.45)
 	gfx.LoadSkinFont("arial.ttf")
 	gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
 	gfx.BeginPath()
 	gfx.FillColor(255, 255, 255)
 	gfx.DrawLabel(folderLabels[selectedFolder], 0, 0, 1000)
-	gfx.DrawLabel(levelLabels[selectedLevel], 0, 79, 400)
+	gfx.DrawLabel(levelLabels[selectedLevel], 0, (portrait and 79) or 99, 400)
 
 	gfx.Restore()
 
