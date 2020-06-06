@@ -69,7 +69,7 @@ end
 
 local noMedal = Image.new('song_select/medals/none.png');
 local medals = {
-  Image.new('song_select/medals/hc.png'),
+  Image.new('song_select/medals/nc.png'),
   Image.new('song_select/medals/c.png'),
   Image.new('song_select/medals/hc.png'),
   Image.new('song_select/medals/uc.png'),
