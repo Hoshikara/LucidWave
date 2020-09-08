@@ -46,9 +46,12 @@ render = function(deltaTime, shown)
 	gfx.LoadSkinFont("arial.ttf")
 	gfx.TextAlign(gfx.TEXT_ALIGN_LEFT)
 	gfx.BeginPath()
-	gfx.FillColor(255, 255, 255)
-	gfx.DrawLabel(folderLabels[selectedFolder], 0, 0, 1000)
-	gfx.DrawLabel(levelLabels[selectedLevel], 0, (portrait and 79) or 99, 400)
+    gfx.FillColor(255, 255, 255)
+    
+    if (folderLabels[selectedFolder] and levelLabels[selectedLevel]) then
+        gfx.DrawLabel(folderLabels[selectedFolder], 0, 0, 1000)
+        gfx.DrawLabel(levelLabels[selectedLevel], 0, (portrait and 79) or 99, 400)
+    end
 
 	gfx.Restore()
 
@@ -68,9 +71,6 @@ render = function(deltaTime, shown)
     gfx.FastText(folderOffset,0,0)
     if selectingFolders then
         for i,f in ipairs(filters.folder) do
-            if not folderLabels[i] then
-               folderLabels[i] = gfx.CreateLabel(f, 40, 0)
-            end
             if i == selectedFolder then
                 gfx.FillColor(245, 65, 125)
             else
@@ -78,13 +78,13 @@ render = function(deltaTime, shown)
             end
             local xpos = resx - 100 + ((i - selectedFolder - folderOffset) ^ 2) * 1
             local ypos = resy/2 + 50  * (i - selectedFolder - folderOffset)
-            gfx.DrawLabel(folderLabels[i], xpos, ypos);
+
+            if (folderLabels[i]) then
+                gfx.DrawLabel(folderLabels[i], xpos, ypos);
+            end
         end
     else
         for i,l in ipairs(filters.level) do
-            if not levelLabels[i] then
-               levelLabels[i] = gfx.CreateLabel(l, 40, 0)
-            end
             if i == selectedLevel then
                 gfx.FillColor(245, 65, 125)
             else
@@ -92,7 +92,10 @@ render = function(deltaTime, shown)
             end
             local xpos = resx - 100 + ((i - selectedLevel - levelOffset) ^ 2) * 1
             local ypos = resy/2 + 50  * (i - selectedLevel - levelOffset)
-            gfx.DrawLabel(levelLabels[i], xpos, ypos);
+
+            if (levelLabels[i]) then
+                gfx.DrawLabel(levelLabels[i], xpos, ypos);
+            end
         end
     end
     levelOffset = levelOffset * 0.7
