@@ -1,3 +1,6 @@
+## This skin is no longer in development, check out my new skin [here](https://github.com/Hoshikara/unnamed-usc-skin)
+
+--------------------------------------------------------------------------------
 
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
 
