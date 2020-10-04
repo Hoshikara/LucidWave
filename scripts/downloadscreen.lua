@@ -22,6 +22,7 @@ local downloaded = {}
 local songs = {}
 local selectedLevels = {}
 local selectedSorting = "Uploaded"
+local lastPlaying = nil
 for i = 1, 20 do
     selectedLevels[i] = false
 end
@@ -129,6 +130,15 @@ function render_song(song, x,y)
         gfx.FontSize(60)
         gfx.FillColor(255,255,255)
         gfx.Text(downloaded[song.id], 375, 150)
+    elseif song.status then
+        gfx.BeginPath()
+        gfx.Rect(0,0,750,300)
+        gfx.FillColor(0,0,0,127)
+        gfx.Fill()
+        gfx.TextAlign(gfx.TEXT_ALIGN_CENTER + gfx.TEXT_ALIGN_MIDDLE)
+        gfx.FontSize(60)
+        gfx.FillColor(255,255,255)
+        gfx.Text(song.status, 375, 150)
     end
     gfx.ResetScissor()
     gfx.Restore()
@@ -314,7 +324,17 @@ function button_pressed(button)
             selectedSorting = sortingOptions[sortingcursor + 1]
             reload_songs()
         end
-        
+    elseif button == game.BUTTON_BTA then
+        if screenState == 0 then
+            local song = songs[cursorPos + 1]
+            if song == nil then return end
+            dlScreen.PlayPreview(encodeURI(song.preview_url), header, song.id)
+            song.status = "Playing"
+            if lastPlaying ~=nil then
+                lastPlaying.status = nil
+            end
+            lastPlaying = song
+        end
     elseif button == game.BUTTON_FXL then
         if screenState ~= 1 then
             screenState = 1
