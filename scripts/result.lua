@@ -179,6 +179,8 @@ Results.drawScore = function(this, score, highScore, positive, x1, y1, x2, y2)
 end
 
 Results.drawGraph = function(this, x, y, w, h)
+  local gaugeType = result.gauge_type or result.flags or 0;
+
   gfx.BeginPath();
   gfx.FillColor(0, 0, 0, 255);
   gfx.Rect(x, y, w, h);
@@ -191,7 +193,7 @@ Results.drawGraph = function(this, x, y, w, h)
     gfx.LineTo(x + i * (w / #result.gaugeSamples), y + h - (h * result.gaugeSamples[i]));
   end
 
-  if ((result.flags & 1) ~= 0) then
+  if (gaugeType == 1) then
     gfx.StrokeWidth(2);
     gfx.StrokeColor(255, 0, 255, 255);
     gfx.Stroke();

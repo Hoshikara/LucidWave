@@ -1490,6 +1490,14 @@ local gaugeExcFillPass = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_fil
 local gaugePercentBack = gfx.CreateSkinImage("gameplay/gauge/gauge_percent_back.png", 0)
 
 function drawGauge(deltaTime)
+	local gauge;
+
+	if (gameplay.gaugeType) then
+		gauge = { type = gameplay.gaugeType, value = gameplay.gauge };
+	else
+		gauge = { type = gameplay.gauge.type, value = gameplay.gauge.value };
+	end
+	
 	gfx.Save()
 
 	if portrait then
@@ -1509,7 +1517,7 @@ function drawGauge(deltaTime)
         posx = resx - width
     end
 
-    local ratePercentage = math.floor(gameplay.gauge * 100)
+    local ratePercentage = math.floor(gauge.value * 100)
 
     local gaugeEffBackW = 58
     local gaugeEffBackH = 362
@@ -1533,17 +1541,17 @@ function drawGauge(deltaTime)
     local posygauge = (desh / 2) - (gaugeEffBackH / 2) - yOffset
     local posxfill = posxgauge + 6
     local posyfill = posygauge + 9
-    local fillyscissor = posyfill + gaugeEffFillH - (gaugeEffFillH * math.min(gaugeImgHighNoClear, gameplay.gauge))
-    local fillhscissor = gaugeEffFillH * gameplay.gauge
-    local fillyscissorClear = posyfill + gaugeEffFillH - (gaugeEffFillH * gameplay.gauge)
-    local fillhscissorClear = math.max(0, gaugeEffFillH * (gameplay.gauge - (1 - gaugeImgLowClear)))
+    local fillyscissor = posyfill + gaugeEffFillH - (gaugeEffFillH * math.min(gaugeImgHighNoClear, gauge.value))
+    local fillhscissor = gaugeEffFillH * gauge.value
+    local fillyscissorClear = posyfill + gaugeEffFillH - (gaugeEffFillH * gauge.value)
+    local fillhscissorClear = math.max(0, gaugeEffFillH * (gauge.value - (1 - gaugeImgLowClear)))
 
     -- GAUGE BACK
     gfx.BeginPath()
 
-    if (gameplay.gaugeType == 0) then
+    if (gauge.type == 0) then
         gfx.ImageRect(posxgauge, posygauge, gaugeEffBackW, gaugeEffBackH, gaugeEffBack, 1, 0)
-    elseif (gameplay.gaugeType == 1) then
+    elseif (gauge.type == 1) then
         gfx.ImageRect(posxgauge, posygauge, gaugeEffBackW, gaugeEffBackH, gaugeExcBack, 1, 0)
     end
 
@@ -1554,13 +1562,13 @@ function drawGauge(deltaTime)
     
     local gaugeFill = gaugeEffFillNormal
 
-    if (gameplay.gaugeType == 0) then
+    if (gauge.type == 0) then
         if (ratePercentage < 70) then
             gaugeFill = gaugeEffFillNormalAnim
         else
             gaugeFill = gaugeEffFillPassAnim
         end
-    elseif (gameplay.gaugeType == 1) then
+    elseif (gauge.type == 1) then
         posxfill = posxgauge + 19.2
         posyfill = (posygauge + 9)
 		gaugeEffFillW = 29
@@ -1568,7 +1576,7 @@ function drawGauge(deltaTime)
         gaugeFill = gaugeExcFillPass
     end
 
-	if (gameplay.gaugeType == 0) then
+	if (gauge.type == 0) then
 		if (ratePercentage < 70) then
 			gfx.Scissor(posxfill, math.min(fillyscissor, fillyscissorClear), gaugeEffFillW, math.max(fillhscissor, fillhscissorClear))
 			gfx.ImageRect(posxfill, posyfill, gaugeEffFillW, gaugeEffFillH, gaugeFill, 1, 0)
@@ -1596,7 +1604,7 @@ function drawGauge(deltaTime)
         posx = posx - 21
     end
 	
-    posy = posy + (70 * 0.35) + height - height * gameplay.gauge
+    posy = posy + (70 * 0.35) + height - height * gauge.value
     posy = math.min(fillyscissor, fillyscissorClear)
 
 	local gpW, gpH = gfx.ImageSize(gaugePercentBack)
@@ -1607,7 +1615,7 @@ function drawGauge(deltaTime)
 
     local gaugePercent = "00%"
 
-    if (gameplay.gauge < 0.1) then
+    if (gauge.value < 0.1) then
         gaugePercent = string.format("%02d%%", ratePercentage)
     else
         gaugePercent = string.format("%d%%", ratePercentage)
@@ -1970,7 +1978,15 @@ local playEffect = true
 
 function drawPassEffect(deltaTime)
 	if (clearEffect == true) then
-		if (gameplay.gauge >= 0.7) then
+		local gauge;
+
+		if (gameplay.gaugeType) then
+			gauge = { type = gameplay.gaugeType, value = gameplay.gauge };
+		else
+			gauge = { type = gameplay.gauge.type, value = gameplay.gauge.value };
+		end
+
+		if (gauge.value >= 0.7) then
 			if playEffect == true then
 
 				effectScale = effectScale + (deltaTime / 1.35) * 30
