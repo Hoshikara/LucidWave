@@ -3,6 +3,8 @@
 #### I advise looking for a download link for LiqidWave if you want a more Vivid Wave-like experience--only use this skin if landscape support is important to you.
 #### This skin is no longer in development, check out my new skin: [Nightfall](https://github.com/Hoshikara/unnamed-usc-skin).
 
+## [Installation Guide (This is for a different skin but the process is the same.)](https://youtu.be/Hqxcwzge06I)
+
 --------------------------------------------------------------------------------
 
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
